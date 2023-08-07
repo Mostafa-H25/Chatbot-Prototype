@@ -1,0 +1,20 @@
+1. prop drilling
+2. client components
+3. double click to open conversation
+4. loading ai message
+5. personal colors
+6. drag and drop
+7. token counter
+8. user 
+9. charts display
+10. micro frontends
+
+
+
+
+next
+  1. useSelectedLayoutSegments
+  2. Parallel Routes
+  3. Intercepting Routes
+  4. Metadata
+  5. generateStaticParams
