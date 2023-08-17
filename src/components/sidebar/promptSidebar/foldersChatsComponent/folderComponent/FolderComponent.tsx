@@ -9,21 +9,17 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
+import { useSidebarContext } from "@/services/context/SidebarContext";
 
 interface Props {
   folder: Folder;
-  folders: Array<Folder>;
-  setFolders: any;
 }
 
-export default function FolderComponent({
-  folder,
-  folders,
-  setFolders,
-}: Props) {
+export default function FolderComponent({ folder }: Props) {
   const [title, setTitle] = useState(folder.title);
   const [editTitle, setEditTitle] = useState(false);
   const [deleteFolderConfirm, setDeleteFolderConfirm] = useState(false);
+  const { folders, setFolders } = useSidebarContext();
 
   function handleChange(e: any, id: number) {
     setTitle(e.target.value);
@@ -33,7 +29,7 @@ export default function FolderComponent({
     e.preventDefault();
     setFolders(
       folders.map((folder: Folder) => {
-        if (folder.id === id) {
+        if (folder.id === String(id)) {
           folder.title = title;
           return folder;
         }
@@ -44,7 +40,7 @@ export default function FolderComponent({
   }
 
   function deleteFolder(id: number) {
-    setFolders(folders.filter((folder: Folder) => folder.id !== id));
+    setFolders(folders.filter((folder: Folder) => folder.id !== String(id)));
   }
 
   return (

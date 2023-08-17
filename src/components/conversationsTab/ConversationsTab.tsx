@@ -9,6 +9,7 @@ import AssistantIcon from "@mui/icons-material/Assistant";
 import CloseIcon from "@mui/icons-material/Close";
 import { useRouter } from "next/navigation";
 import { ChatTab } from "@/interfaces/chatTab.interface";
+import { useSidebarContext } from "@/services/context/SidebarContext";
 
 interface Props {
   id: string;
@@ -16,7 +17,7 @@ interface Props {
 }
 
 export default function ConversationsTab({ id, chat }: Props) {
-  const { chatTabs, setChatTabs } = useGlobalContext();
+  const { chatTabs, setChatTabs, theme } = useGlobalContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -34,7 +35,7 @@ export default function ConversationsTab({ id, chat }: Props) {
 
     if (chat.id === id) {
       if (chatTabs.length === 1) {
-        router.push("/");
+        router.push("/chats");
       } else {
         router.push(chatTabs[chatTabs.length - 1].id);
       }
@@ -42,18 +43,22 @@ export default function ConversationsTab({ id, chat }: Props) {
   };
 
   return (
-    <div className="flex mt-2 w-full h-fit bg-[#343541]">
+    <div
+      className={`flex mt-2 w-full h-fit bg-[#343541] ${
+        theme === "dark" ? " bg-[#343541]" : "bg-white"
+      }`}
+    >
       {chatTabs.map((chatTab) => (
         <div
           key={chatTab.id}
           className="relative flex justify-between items-center "
         >
           <Link
-            href={`/${chatTab.id}`}
+            href={`/chats/${chatTab.id}`}
             className={
               chatTab.title === chat?.title
-                ? "flex justify-start items-center w-56 border border-neutral-800 rounded-t-md bg-[#202123] py-1 px-2 cursor-pointer hover:bg-[#4e5058]/50 text-xs font-bold"
-                : "flex justify-start items-center w-56 border border-neutral-800 rounded-t-md bg-[#4e5058] py-1 px-2 cursor-pointer hover:bg-[#4e5058]/50 text-xs"
+                ? "flex justify-start items-center w-56  rounded-t-md bg-[#202123] py-1 px-2 cursor-pointer hover:bg-[#4e5058]/50 text-xs font-bold"
+                : "flex justify-start items-center w-56   rounded-t-md bg-[#4e5058] py-1 px-2 cursor-pointer hover:bg-[#4e5058]/50 text-xs"
             }
           >
             <AssistantIcon fontSize="small" />

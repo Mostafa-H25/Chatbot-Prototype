@@ -2,20 +2,13 @@ import { Dispatch, SetStateAction } from "react";
 
 import { useGlobalContext } from "@/services/context/GlobalContext";
 
-import Chat from "@/interfaces/chat.interface";
-import Folder from "@/interfaces/folder.interface";
-
 import AddIcon from "@mui/icons-material/Add";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
+import { useSidebarContext } from "@/services/context/SidebarContext";
 
-interface Props {
-  folders: Folder[];
-  setFolders: any;
-}
-
-export default function ChatSidebarHeader({ folders, setFolders }: Props) {
+export default function ChatSidebarHeader() {
   const { user, chats, setChats } = useGlobalContext();
-
+  const { folders, setFolders } = useSidebarContext();
   function addNewChat() {
     let counter = chats.length + 1;
     setChats([
@@ -39,6 +32,7 @@ export default function ChatSidebarHeader({ folders, setFolders }: Props) {
         title: `New Folder ${counter}`,
         items: [],
         createdAt: new Date(),
+        chatIds: [],
       },
     ]);
   }

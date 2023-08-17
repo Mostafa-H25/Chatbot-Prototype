@@ -30,6 +30,8 @@ interface StateContext {
   setIsModalOpen: any;
   chatTabs: ChatTab[];
   setChatTabs: any;
+  theme: string;
+  toggleTheme: any;
 }
 
 const initialState = {
@@ -49,6 +51,8 @@ const initialState = {
   setIsModalOpen: (isModalOpen: boolean) => {},
   chatTabs: [],
   setChatTabs: (chatTabs: ChatTab[]) => {},
+  theme: "",
+  toggleTheme: () => {},
 };
 
 const AppContext = createContext<StateContext>(initialState);
@@ -60,10 +64,12 @@ interface Props {
 }
 
 export default function GlobalContext({ children }: Props) {
+  const [theme, setTheme] = useState("dark");
   const [user, setUser] = useState<User | undefined>(DummyUser);
   const [chats, setChats] = useState<Chat[]>([]);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [chatTabs, setChatTabs] = useState<ChatTab[]>([]);
+
   const [isSettingsModalOpen, setIsSettingsModalOpen] =
     useState<boolean>(false);
   const [isAuthenticationModalOpen, setIsAuthenticationModalOpen] =
@@ -74,6 +80,10 @@ export default function GlobalContext({ children }: Props) {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
+  };
+
   useEffect(() => {
     if (
       isSettingsModalOpen ||
@@ -81,6 +91,7 @@ export default function GlobalContext({ children }: Props) {
       isPromptModalOpen.conditional
     ) {
       setIsModalOpen(true);
+      console.log(isAuthenticationModalOpen);
     } else {
       setIsModalOpen(false);
     }
@@ -89,13 +100,6 @@ export default function GlobalContext({ children }: Props) {
     isAuthenticationModalOpen,
     isPromptModalOpen.conditional,
   ]);
-
-  // const [currentTheme, setCurrentTheme] = useState("Light");
-
-  // const setTheme = (e) => {
-  //   setCurrentTheme(e.target.value);
-  //   localStorage.setItem("themeMode", e.target.value);
-  // }
 
   return (
     <AppContext.Provider
@@ -116,6 +120,8 @@ export default function GlobalContext({ children }: Props) {
         setIsModalOpen,
         chatTabs,
         setChatTabs,
+        theme,
+        toggleTheme,
       }}
     >
       {children}

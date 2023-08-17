@@ -6,4 +6,6 @@ export default interface Folder {
   items: Array<Chat>;
   user: User;
   createdAt: Date;
+  chatIds: string[];
+  backgroundColor: string;
 }

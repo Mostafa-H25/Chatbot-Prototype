@@ -8,17 +8,10 @@ import FolderComponent from "./folderComponent/FolderComponent";
 import PromptComponent from "./PromptComponent/PromptComponent";
 import NoData from "../../components/noData/NoData";
 
-interface Props {
-  folders: Array<Folder>;
-  setFolders: any;
-}
 
-export default function FoldersPromptsComponent({
-  folders,
-  setFolders,
-}: Props) {
+export default function FoldersPromptsComponent() {
   const { prompts } = useGlobalContext();
-  const { search, filteredPrompts } = useSidebarContext();
+  const { search, filteredPrompts,folders,setFolders } = useSidebarContext();
 
   return (
     <div className="flex-grow overflow-auto">
@@ -31,8 +24,6 @@ export default function FoldersPromptsComponent({
                 <div key={folder.id}>
                   <FolderComponent
                     folder={folder}
-                    folders={folders}
-                    setFolders={setFolders}
                   />
                 </div>
               ))}

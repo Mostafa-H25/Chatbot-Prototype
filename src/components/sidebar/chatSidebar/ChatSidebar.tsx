@@ -7,29 +7,31 @@ import Search from "../components/search/Search";
 import FoldersChatsComponent from "./foldersChatsComponent/FoldersChatsComponent";
 import ChatSidebarFooter from "./chatSidebarFooter/ChatSidebarFooter";
 import SidebarButton from "../components/sidebarButton/SidebarButton";
-import SidebarContext from "@/services/context/SidebarContext";
+import SidebarContext, {
+  useSidebarContext,
+} from "@/services/context/SidebarContext";
+import { useGlobalContext } from "@/services/context/GlobalContext";
 
 export default function ChatSidebar() {
   const [isLeftSideBarOpen, setIsLeftSideBarOpen] = useState(true);
-  const [folders, setFolders] = useState([]);
-
+  const { theme } = useGlobalContext();
   return (
     <SidebarContext>
-      <section className="z-40 flex h-full bg-[#343541]">
+      <section
+        className={`z-40 flex h-full ${
+          theme === "dark" ? "bg-[#343541]" : "bg-white"
+        }`}
+      >
         {isLeftSideBarOpen ? (
           <>
             <div className="flex w-[260px] flex-col space-y-2 bg-[#202123] p-2 text-[14px] transition-all">
-              <ChatSidebarHeader folders={folders} setFolders={setFolders} />
+              <ChatSidebarHeader  />
 
               <Search
                 sidebar="chatSidebar"
-                folders={folders}
-                setFolders={setFolders}
               />
 
               <FoldersChatsComponent
-                folders={folders}
-                setFolders={setFolders}
               />
 
               <ChatSidebarFooter />

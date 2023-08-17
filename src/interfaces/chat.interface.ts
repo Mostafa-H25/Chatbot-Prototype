@@ -7,4 +7,5 @@ export default interface Chat {
   modifiedAt: Date;
   user: User;
   createdAt: Date;
+  folderId: string;
 }

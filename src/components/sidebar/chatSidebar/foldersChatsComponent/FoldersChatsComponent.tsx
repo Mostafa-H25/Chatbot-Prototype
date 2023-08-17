@@ -10,16 +10,37 @@ import Folder from "@/interfaces/folder.interface";
 import FolderComponent from "./folderComponent/FolderComponent";
 import ChatComponent from "./ChatComponent/ChatComponent";
 import NoData from "../../components/noData/NoData";
+
 import { useSidebarContext } from "@/services/context/SidebarContext";
 
-interface Props {
-  folders: Array<Folder>;
-  setFolders: any;
-}
 
-export default function FoldersChatsComponent({ folders, setFolders }: Props) {
+export default function FoldersChatsComponent() {
   const { chats } = useGlobalContext();
-  const { search, filteredChats } = useSidebarContext();
+  const { search, filteredChats,folders,setFolders } = useSidebarContext();
+
+  const handleDrop = (folderId: string, chatId: string) => {
+    const updatedFolders = folders.map((folder) => {
+      if (folder.id === folderId) {
+        return {
+          ...folder,
+          chatIds: [...folder.chatIds, chatId],
+        };
+      } else if (folder.chatIds.includes(chatId)) {
+        // Remove the chat from the source folder's chatIds
+        return {
+          ...folder,
+          chatIds: folder.chatIds.filter((id) => id !== chatId),
+        };
+      }
+      return folder;
+    });
+
+    setFolders(updatedFolders);
+  };
+
+  const availableChats = chats.filter((chat) => {
+    return folders.every((folder) => !folder.chatIds.includes(chat.id));
+  });
 
   return (
     <div className="flex-grow overflow-auto">
@@ -32,8 +53,7 @@ export default function FoldersChatsComponent({ folders, setFolders }: Props) {
                 <div key={folder.id}>
                   <FolderComponent
                     folder={folder}
-                    folders={folders}
-                    setFolders={setFolders}
+                    onDrop={handleDrop}
                   />
                 </div>
               ))}
@@ -61,9 +81,11 @@ export default function FoldersChatsComponent({ folders, setFolders }: Props) {
                 </>
               ) : (
                 <>
-                  {chats.map((chat: Chat) => (
+                  {availableChats.map((chat: Chat) => (
                     <div key={chat.id}>
-                      <ChatComponent chat={chat} />
+                      <ChatComponent
+                        chat={chat}
+                      />
                     </div>
                   ))}
                 </>
