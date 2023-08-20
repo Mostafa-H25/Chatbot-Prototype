@@ -12,6 +12,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
 import { useRouter } from "next/navigation";
 
+
 interface Props {
   authenticationType: string;
   closeModal: any;
