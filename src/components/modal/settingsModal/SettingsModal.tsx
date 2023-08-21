@@ -1,13 +1,19 @@
 import { useGlobalContext } from "@/services/context/GlobalContext";
+import { useSidebarContext } from "@/services/context/SidebarContext";
 
 export default function SettingsModal() {
-  const { isSettingsModalOpen, setIsSettingsModalOpen } = useGlobalContext();
+  const { isSettingsModalOpen, setIsSettingsModalOpen, theme, toggleTheme } =
+    useGlobalContext();
 
   return (
     <>
       <p className="m-0 pb-4 text-lg font-bold text-neutral-200">Settings</p>
       <p className="m-0 pb-2 text-sm font-bold text-neutral-200">Theme</p>
-      <select className="w-full bg-[#202123] p-2 text-neutral-200 cursor-pointer">
+      <select
+        className={`w-full bg-[#202123] p-2 text-neutral-200 cursor-pointer`}
+        onChange={toggleTheme}
+        value={theme}
+      >
         <option value="dark">Dark mode</option>
         <option value="light">Light mode</option>
       </select>

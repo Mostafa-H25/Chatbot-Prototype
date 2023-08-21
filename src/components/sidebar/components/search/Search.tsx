@@ -11,12 +11,11 @@ import { useSidebarContext } from "@/services/context/SidebarContext";
 
 interface Props {
   sidebar: string;
-  folders: Folder[];
-  setFolders: any;
 }
 
-export default function Search({ sidebar, folders, setFolders }: Props) {
-  const { search, setSearch, onSearch } = useSidebarContext();
+export default function Search({ sidebar }: Props) {
+  const { search, setSearch, onSearch, folders, setFolders } =
+    useSidebarContext();
   const [isLoading, setIsLoading] = useState(false);
 
   const clearSearch = () => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState, } from "react";
 
 import { useGlobalContext } from "@/services/context/GlobalContext";
 
@@ -10,15 +10,26 @@ import GoogleIcon from "@mui/icons-material/Google";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
-export default function AuthenticationModal() {
-  const { isAuthenticationModalOpen, setIsAuthenticationModalOpen, setUser } =
-    useGlobalContext();
+import { useRouter } from "next/navigation";
+
+interface Props {
+  authenticationType: string;
+  closeModal: any;
+  setAuthenticationType: any;
+}
+
+export default function AuthenticationModal({
+  authenticationType,
+  closeModal,
+  setAuthenticationType,
+}: Props) {
+  const { setUser, setIsAuthenticationModalOpen } =useGlobalContext();
+
 
   const [isLoading, setIsLoading] = useState(false);
 
-  type AuthenticationType = "Sign In" | "Register";
-  const [authenticationType, setAuthenticationType] =
-    useState<AuthenticationType>("Sign In");
+  const router = useRouter();
+
   const [authenticatingUser, setAuthenticatingUser] = useState({
     email: "",
     password: "",
@@ -32,7 +43,7 @@ export default function AuthenticationModal() {
   });
 
   const goBack = () => {
-    setAuthenticationType("Sign In");
+    closeModal();
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -100,12 +111,19 @@ export default function AuthenticationModal() {
       console.log("ERROR", error);
     }
   };
+  const handleSignin = () => {
+    // Perform logout actions if needed
+
+    // Redirect to login page while replacing the current route
+    router.push("/chats");
+  };
 
   const handleSubmit = (
     e: FormEvent<HTMLFormElement>,
     authenticationType: string
   ) => {
     e.preventDefault();
+    e.stopPropagation();
     if (authenticationType === "Sign In") {
       logIn(e);
     } else if (authenticationType === "Register") {
@@ -113,18 +131,18 @@ export default function AuthenticationModal() {
     }
   };
 
+
   return (
-    <div className="relative">
-      {authenticationType === "Register" && (
-        <button
-          onClick={() => goBack()}
-          type="button"
-          className="absolute -top-2 -left-2 "
-        >
-          <ChevronLeftIcon fontSize="large" />
-        </button>
-      )}
-      <p className="pt-12 pb-4 text-4xl text-center">{authenticationType}</p>
+    <div className="bg-white dark:bg-[#202123] rounded-lg px-8 py-2 shadow-md max-w-md w-full text-black">
+      <button
+        onClick={() => goBack()}
+        type="button"
+        className="absolute -top-50 -left-50 z-10"
+      >
+        <ChevronLeftIcon fontSize="large" />
+      </button>
+
+      <p className="py-4 text-4xl text-center">{authenticationType}</p>
       <form
         onSubmit={(event: FormEvent<HTMLFormElement>) =>
           handleSubmit(event, authenticationType)
@@ -132,11 +150,11 @@ export default function AuthenticationModal() {
       >
         {/* Registration/Sign In Form */}
         <div className="p-4">
-          <label className="p-2 text-sm font-bold text-neutral-200">
+          <label className="p-2 text-sm font-bold " htmlFor="email">
             Email
           </label>
           <input
-            className="mt-2 mb-4 mx-2 w-full border border-neutral-800 rounded-lg bg-[#40414F] px-4 py-2 shadow text-neutral-100 focus:outline-none"
+            className="mt-2 mb-4 mx-2 w-full border border-neutral-800 rounded-lg bg-[#40414F] px-4 py-2 shadow  focus:outline-none text-neutral-100 "
             type="email"
             id="email"
             name="email"
@@ -149,11 +167,9 @@ export default function AuthenticationModal() {
               handleChange(event)
             }
           />
-          <label className="p-2 text-sm font-bold text-neutral-200">
-            Password
-          </label>
+          <label className="p-2 text-sm font-bold ">Password</label>
           <input
-            className="mt-2 mb-4 mx-2 w-full border border-neutral-800 rounded-lg bg-[#40414F] px-4 py-2 shadow text-neutral-100 focus:outline-none"
+            className="mt-2 mb-4 mx-2 w-full border border-neutral-800 rounded-lg bg-[#40414F] px-4 py-2 shadow  focus:outline-none text-neutral-100 "
             type="password"
             id="password"
             name="password"
@@ -170,9 +186,7 @@ export default function AuthenticationModal() {
           {/* Register Inputs */}
           {authenticationType === "Register" && (
             <>
-              <label className="p-2 text-sm font-bold text-neutral-200">
-                Repeat Password
-              </label>
+              <label className="p-2 text-sm font-bold ">Repeat Password</label>
               <input
                 className="mt-2 mb-4 mx-2 w-full border border-neutral-800 rounded-lg bg-[#40414F] px-4 py-2 shadow text-neutral-100 focus:outline-none"
                 type="password"
@@ -183,9 +197,7 @@ export default function AuthenticationModal() {
                   handleChange(event)
                 }
               />
-              <label className="p-2 text-sm font-bold text-neutral-200">
-                Username
-              </label>
+              <label className="p-2 text-sm font-bold ">Username</label>
               <input
                 className="mt-2 mb-4 mx-2 w-full border border-neutral-800 rounded-lg bg-[#40414F] px-4 py-2 shadow text-neutral-100 focus:outline-none"
                 type="text"
@@ -197,9 +209,7 @@ export default function AuthenticationModal() {
                 }
               />
               <div>
-                <p className="p-2 text-sm font-bold text-neutral-200">
-                  Registration Type
-                </p>
+                <p className="p-2 text-sm font-bold ">Registration Type</p>
                 <div className="flex flex-col px-4">
                   <div>
                     <input
@@ -211,7 +221,7 @@ export default function AuthenticationModal() {
                     />
                     <label
                       htmlFor="basicUserCategory"
-                      className="p-2 text-sm font-bold text-neutral-200"
+                      className="p-2 text-sm font-bold "
                     >
                       Basic
                     </label>
@@ -226,7 +236,7 @@ export default function AuthenticationModal() {
                     />
                     <label
                       htmlFor="premiumUserCategory"
-                      className="p-2 text-sm font-bold text-neutral-200"
+                      className="p-2 text-sm font-bold "
                     >
                       Premium
                     </label>
@@ -243,6 +253,7 @@ export default function AuthenticationModal() {
             <button
               type="submit"
               disabled={isLoading}
+              onClick={handleSignin}
               className="my-2 w-full rounded-lg border px-4 py-2 shadow focus:outline-none border-neutral-800 border-opacity-50 bg-white font-bold text-black hover:bg-neutral-200"
             >
               Sign In
@@ -261,7 +272,7 @@ export default function AuthenticationModal() {
       </form>
 
       <div className="relative mb-4">
-        <div className="absolute inset-0 flex items-center">
+        <div className="absolute inset-0  flex items-center">
           <div className="w-full border-t border-gray-300" />
         </div>
         <div className="relative flex justify-center text-sm">
@@ -288,11 +299,11 @@ export default function AuthenticationModal() {
 
       {authenticationType === "Sign In" ? (
         <>
-          <p className="my-2 w-full text-center text-gray-100">
+          <p className="my-2 w-full text-center ">
             New to Chatbot?&nbsp;
             <span
               onClick={() => setAuthenticationType("Register")}
-              className="decoration-from-font cursor-pointer hover:text-white hover:underline"
+              className="decoration-from-font cursor-pointer hover:text-blue-300 hover:underline text-blue-700  "
             >
               Create a new Account
             </span>
@@ -302,10 +313,10 @@ export default function AuthenticationModal() {
         <>
           <p
             onClick={() => setAuthenticationType("Sign In")}
-            className="my-2 w-full text-center text-gray-100"
+            className="my-2 w-full text-center"
           >
             Already have an account.&nbsp;
-            <span className="decoration-from-font cursor-pointer hover:text-white hover:underline">
+            <span className="decoration-from-font text-blue-700 cursor-pointer hover:text-blue-300 hover:underline">
               Sign In
             </span>
           </p>

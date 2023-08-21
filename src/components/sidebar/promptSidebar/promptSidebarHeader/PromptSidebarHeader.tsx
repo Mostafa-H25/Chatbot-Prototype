@@ -5,13 +5,13 @@ import Prompt from "@/interfaces/prompt.interface";
 
 import AddIcon from "@mui/icons-material/Add";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
+import { useSidebarContext } from "@/services/context/SidebarContext";
 
-interface Props {
-  folders: Folder[];
-  setFolders: any;
-}
 
-export default function PromptSidebarHeader({ folders, setFolders }: Props) {
+
+export default function PromptSidebarHeader() {
+    const {  folders, setFolders } = useSidebarContext();
+
   const { user, prompts, setPrompts } = useGlobalContext();
 
   function addMainComponent() {
@@ -38,6 +38,7 @@ export default function PromptSidebarHeader({ folders, setFolders }: Props) {
         title: `New Folder ${counter}`,
         items: [],
         createdAt: new Date(),
+        chatIds: [],
       },
     ]);
   }

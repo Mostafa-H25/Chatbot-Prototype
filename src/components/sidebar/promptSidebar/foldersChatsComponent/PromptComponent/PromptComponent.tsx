@@ -33,7 +33,7 @@ export default function PromptComponent({ prompt }: Props) {
     setTitle(e.target.value);
   }
 
-  function editPromptName(e: MouseEvent<HTMLButtonElement>, id: number) {
+  function editPromptName(e: MouseEvent<HTMLButtonElement>, id: string) {
     e.preventDefault();
     setPrompts(
       prompts.map((prompt: Prompt) => {

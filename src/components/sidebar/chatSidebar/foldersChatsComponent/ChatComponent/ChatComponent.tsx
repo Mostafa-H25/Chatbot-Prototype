@@ -12,6 +12,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import ChatIcon from "@mui/icons-material/Chat";
+import { useSidebarContext } from "@/services/context/SidebarContext";
 
 interface Props {
   chat: Chat;
@@ -19,8 +20,9 @@ interface Props {
 
 export default function ChatComponent({ chat }: Props) {
   const { chats, setChats } = useGlobalContext();
+  const { folders, setFolders } = useSidebarContext();
 
-  const [title, setTitle] = useState(chat.title);
+  const [title, setTitle] = useState("");
   const [deleteChatConfirm, setDeleteChatConfirm] = useState(false);
   const [openEditTitle, setOpenEditTitle] = useState(false);
 
@@ -29,7 +31,7 @@ export default function ChatComponent({ chat }: Props) {
   }
 
   function editChatName(e: MouseEvent<HTMLButtonElement>, id: string) {
-    e.preventDefault();
+    // e.preventDefault();
     setChats(
       chats.map((chat: Chat) => {
         if (chat.id === id) {
@@ -44,11 +46,25 @@ export default function ChatComponent({ chat }: Props) {
 
   function deleteChat(id: string) {
     setChats(chats.filter((chat: Chat) => chat.id !== id));
+
+    const updatedFolders = folders.map((folder) => ({
+      ...folder,
+      chatIds: folder.chatIds.filter((chatId) => chatId !== id),
+    }));
+    setFolders(updatedFolders);
   }
+
+  const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+    event.dataTransfer.setData("text/plain", chat.id);
+  };
 
   return (
     <>
-      <div className="relative flex items-center">
+      <div
+        className="relative flex items-center"
+        draggable
+        onDragStart={handleDragStart}
+      >
         {openEditTitle ? (
           <>
             <button
@@ -90,7 +106,7 @@ export default function ChatComponent({ chat }: Props) {
         ) : (
           <>
             <Link
-              href={`/${chat.id}`}
+              href={`/chats/${chat.id}`}
               className="flex items-center gap-3 w-full rounded-lg bg-[#343541]/90 p-3 cursor-pointer text-sm transition-colors duration-200 hover:bg-[#343541]/90"
             >
               <ChatIcon />
@@ -103,7 +119,9 @@ export default function ChatComponent({ chat }: Props) {
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
-                    onClick={() => deleteChat(chat.id)}
+                    onClick={() => {
+                      deleteChat(chat.id);
+                    }}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <CheckIcon />

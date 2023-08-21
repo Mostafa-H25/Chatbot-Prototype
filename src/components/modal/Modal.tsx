@@ -4,7 +4,6 @@ import { useGlobalContext } from "@/services/context/GlobalContext";
 import { useRef, MouseEvent } from "react";
 import ReactDOM from "react-dom";
 import SettingsModal from "./settingsModal/SettingsModal";
-import AuthenticationModal from "./authenticationModal/AuthenticationModal";
 import PromptModal from "./promptModal/PromptModal";
 
 export default function Modal() {
@@ -13,8 +12,6 @@ export default function Modal() {
     setIsModalOpen,
     isSettingsModalOpen,
     setIsSettingsModalOpen,
-    isAuthenticationModalOpen,
-    setIsAuthenticationModalOpen,
     isPromptModalOpen,
     setIsPromptModalOpen,
   } = useGlobalContext();
@@ -23,7 +20,6 @@ export default function Modal() {
 
   const checkIfClickedOutside = (e: MouseEvent<HTMLDivElement>) => {
     if (ref.current && !ref.current.contains(e.target)) {
-      setIsAuthenticationModalOpen(false);
       setIsSettingsModalOpen(false);
       setIsPromptModalOpen({ conditional: false, prompt: {} });
       setIsModalOpen(false);
@@ -35,18 +31,8 @@ export default function Modal() {
       onClick={(event: MouseEvent<HTMLDivElement>) =>
         checkIfClickedOutside(event)
       }
-      className="fixed flex justify-center items-center w-full h-full z-50 bg-black/50"
+      className="fixed flex justify-center items-center w-full h-full  bg-black/50 z-50"
     >
-      {isAuthenticationModalOpen && (
-        <>
-          <div
-            ref={ref}
-            className="w-[512px] max-h-[624px] border border-gray-400 rounded-lg bg-violet-500 transform overflow-y-auto scrollbar p-6 transition-all"
-          >
-            <AuthenticationModal />
-          </div>
-        </>
-      )}
       {isSettingsModalOpen && (
         <>
           <div

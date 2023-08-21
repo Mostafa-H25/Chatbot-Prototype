@@ -23,6 +23,8 @@ interface StateContext {
   filteredPrompts: Prompt[];
   setFilteredPrompts: any;
   onSearch: any;
+  folders: Folder[];
+  setFolders: (folders: Folder[]) => void;
 }
 
 const Context = createContext<StateContext>({
@@ -35,6 +37,8 @@ const Context = createContext<StateContext>({
   filteredPrompts: [],
   setFilteredPrompts: (filteredPrompts: Prompt[]) => {},
   onSearch: () => {},
+  folders: [],
+  setFolders: (folders: Folder[]) => {},
 });
 
 export const useSidebarContext = () => useContext(Context);
@@ -49,6 +53,8 @@ export default function SidebarContext({ children }: Props) {
   const [filteredFolders, setFilteredFolders] = useState<Folder[]>([]);
   const [filteredChats, setFilteredChats] = useState<Chat[]>([]);
   const [filteredPrompts, setFilteredPrompts] = useState<Prompt[]>([]);
+  const [folders, setFolders] = useState<Folder[]>([]);
+  const [tabBackgroundColor, setTabBackgroundColor] = useState("#343541");
 
   const onSearch = (
     e: ChangeEvent<HTMLInputElement>,
@@ -94,6 +100,8 @@ export default function SidebarContext({ children }: Props) {
         filteredPrompts,
         setFilteredPrompts,
         onSearch,
+        folders,
+        setFolders,
       }}
     >
       {children}

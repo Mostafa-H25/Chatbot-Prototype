@@ -1,6 +1,5 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
 import Link from "next/link";
 
 import { useGlobalContext } from "@/services/context/GlobalContext";
@@ -8,10 +7,8 @@ import { useGlobalContext } from "@/services/context/GlobalContext";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import SettingsIcon from "@mui/icons-material/Settings";
-import KeyIcon from "@mui/icons-material/Key";
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
-
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 export default function ChatSidebarFooter() {
   const {
     user,
@@ -24,48 +21,45 @@ export default function ChatSidebarFooter() {
     setIsAuthenticationModalOpen,
   } = useGlobalContext();
 
-  const [deleteChatsConfirm, setDeleteChatsConfirm] = useState(false);
+  const handleDeleteClick = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will not be able to recover this item!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setChats([]);
+        // Call the API or perform any other necessary action here
+        Swal.fire("Deleted!", "Your item has been deleted.", "success");
+      }
+    });
+  };
+
+  const router = useRouter();
+
+  const handleLogout = () => {
+    // Perform logout actions if needed
+    setUser({ ...user, isAuthenticated: false });
+    // Redirect to login page while replacing the current route
+    router.replace("/");
+  };
 
   return (
     <div className="flex flex-col items-center space-y-1 border-t border-white/20 pt-1 text-sm">
-      {chats.length > 0 ? (
+      {chats.length > 0 && (
         <>
-          {deleteChatsConfirm ? (
-            <>
-              <button className="relative flex w-full cursor-pointer select-none items-center gap-3 rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10">
-                <FileUploadIcon />
-                <span>Are you sure?</span>
-                <div className="absolute right-1 z-10 flex text-gray-300">
-                  <button
-                    onClick={() => setChats([])}
-                    type="submit"
-                    className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
-                  >
-                    <CheckIcon />
-                  </button>
-                  <button
-                    onClick={() => setDeleteChatsConfirm(!deleteChatsConfirm)}
-                    className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
-                  >
-                    <ClearIcon />
-                  </button>
-                </div>
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => setDeleteChatsConfirm(!deleteChatsConfirm)}
-                className="flex w-full cursor-pointer select-none items-center gap-3 rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
-              >
-                <FileUploadIcon />
-                <span>Clear Chats</span>
-              </button>
-            </>
-          )}
+          <button
+            onClick={handleDeleteClick}
+            className="flex w-full cursor-pointer select-none items-center gap-3 rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
+          >
+            <FileUploadIcon />
+            <span>Clear Chats</span>
+          </button>
         </>
-      ) : (
-        <></>
       )}
 
       <button className="flex items-center gap-3 w-full cursor-pointer select-none rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10">
@@ -86,7 +80,7 @@ export default function ChatSidebarFooter() {
       </button>
       <button className="flex items-center gap-3 w-full cursor-pointer select-none rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10">
         <Link
-          href="/history"
+          href="/chats/history"
           download={<p>history</p>}
           rel="noreferrer"
           className="flex items-center gap-3 w-full h-full"
@@ -103,20 +97,10 @@ export default function ChatSidebarFooter() {
         <span>Settings</span>
       </button>
       {/* user.isAuthenticated */}
-      {user?.isAuthenticated === false ? (
+      {user?.isAuthenticated === true && (
         <>
           <button
-            onClick={() => setIsAuthenticationModalOpen(true)}
-            className="flex justify-center w-full cursor-pointer select-none items-center gap-3 rounded-md bg-violet-500 py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-violet-600"
-          >
-            <KeyIcon />
-            <span>Sign In</span>
-          </button>
-        </>
-      ) : (
-        <>
-          <button
-            onClick={() => setUser({ ...user, isAuthenticated: false })}
+            onClick={handleLogout}
             className="flex w-full cursor-pointer select-none items-center gap-3 rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
           >
             <SettingsIcon />
