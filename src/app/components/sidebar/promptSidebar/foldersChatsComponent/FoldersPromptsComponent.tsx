@@ -9,7 +9,7 @@ import NoData from "../../components/noData/NoData";
 
 export default function FoldersPromptsComponent() {
   const { prompts } = useGlobalContext();
-  const { folders, search, filteredPrompts } = useSidebarContext();
+  const { search, filteredPrompts, folders, setFolders } = useSidebarContext();
 
   return (
     <div className="flex-grow overflow-auto">

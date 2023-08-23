@@ -1,4 +1,6 @@
-import { ChangeEvent, MouseEvent } from "react";
+"use client"
+
+import { ChangeEvent, MouseEvent, useState } from "react";
 import Link from "next/link";
 import { useGlobalContext } from "@/app/services/context/GlobalContext";
 import { useSidebarContext } from "@/app/services/context/SidebarContext";
@@ -16,14 +18,11 @@ interface Props {
 
 export default function ChatComponent({ chat }: Props) {
   const { chats, setChats } = useGlobalContext();
-  const {
-    title,
-    setTitle,
-    editTitle,
-    setEditTitle,
-    deleteConfirm,
-    setDeleteConfirm,
-  } = useSidebarContext();
+  const { folders, setFolders } = useSidebarContext();
+
+  const [title, setTitle] = useState("");
+  const [deleteChatConfirm, setDeleteChatConfirm] = useState(false);
+  const [openEditTitle, setOpenEditTitle] = useState(false);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setTitle(e.target.value);
@@ -70,7 +69,7 @@ export default function ChatComponent({ chat }: Props) {
         return chat;
       })
     );
-    setEditTitle(false);
+    setOpenEditTitle(false);
   };
 
   const deleteChat = async (id: string) => {
@@ -90,12 +89,26 @@ export default function ChatComponent({ chat }: Props) {
     // } catch (error) {
     //   console.log("ERROR", error);
     // }
+
+    const updatedFolders = folders.map((folder) => ({
+      ...folder,
+      chatIds: folder.chatIds.filter((chatId) => chatId !== id),
+    }));
+    setFolders(updatedFolders);
+  }
+
+  const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+    event.dataTransfer.setData("text/plain", chat.chatId);
   };
 
   return (
     <>
-      <div className="relative flex items-center">
-        {editTitle ? (
+      <div
+        className="relative flex items-center"
+        draggable
+        onDragStart={handleDragStart}
+      >
+        {openEditTitle ? (
           <>
             <button
               className="flex items-center gap-3 w-full rounded-lg bg-[#343541]/90 p-3 cursor-pointer text-sm transition-colors duration-200 hover:bg-[#343541]/90"
@@ -126,7 +139,7 @@ export default function ChatComponent({ chat }: Props) {
                 <CheckIcon />
               </button>
               <button
-                onClick={() => setEditTitle(false)}
+                onClick={() => setOpenEditTitle(false)}
                 className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
               >
                 <ClearIcon />
@@ -145,7 +158,7 @@ export default function ChatComponent({ chat }: Props) {
               </div>
             </Link>
 
-            {deleteConfirm ? (
+            {deleteChatConfirm ? (
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
@@ -155,7 +168,7 @@ export default function ChatComponent({ chat }: Props) {
                     <CheckIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteConfirm(false)}
+                    onClick={() => setDeleteChatConfirm(false)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <ClearIcon />
@@ -166,13 +179,13 @@ export default function ChatComponent({ chat }: Props) {
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
-                    onClick={() => setEditTitle(true)}
+                    onClick={() => setOpenEditTitle(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <EditIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteConfirm(true)}
+                    onClick={() => setDeleteChatConfirm(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <DeleteIcon />

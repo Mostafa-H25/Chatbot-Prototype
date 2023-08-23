@@ -1,15 +1,19 @@
 export default function HomeHero() {
   return (
-    <main className="flex flex-1">
-      <div className="relative flex flex-col flex-1 overflow-hidden bg-[#343541]">
+    <main className="flex flex-1 text-black">
+      <div
+        className={`relative flex flex-col flex-1 overflow-hidden  ${
+          theme === "dark" ? "bg-[#343541]" : "bg-white"
+        }`}
+      >
         <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
           {/* Welcome */}
-          <div className="text-center text-4xl font-bold text-white">
+          <div className={`text-center text-4xl font-bold ${theme === "dark" ? "text-white" : "text-black"}`}>
             Welcome to Chatbot UI
           </div>
 
           {/* Sub-title */}
-          <div className="text-center text-lg text-white">
+          <div className={`text-center text-lg ${theme === "dark" ? "text-white" : "text-black/50"}`}>
             <div className="mb-8 hidden">
               {/* eslint-disable-next-line react/no-unescaped-entities */}
               Chatbot UI is an open source clone of OpenAI's ChatGPT UI.

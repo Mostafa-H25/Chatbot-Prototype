@@ -71,6 +71,7 @@ export default function SidebarContext({ children }: Props) {
   const [filteredFolders, setFilteredFolders] = useState<Folder[]>([]);
   const [filteredChats, setFilteredChats] = useState<Chat[]>([]);
   const [filteredPrompts, setFilteredPrompts] = useState<Prompt[]>([]);
+  const [tabBackgroundColor, setTabBackgroundColor] = useState("#343541");
 
   const onSearch = (e: ChangeEvent<HTMLInputElement>, sidebar: string) => {
     if (sidebar === "chatSidebar") {

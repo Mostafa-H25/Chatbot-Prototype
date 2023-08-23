@@ -1,4 +1,6 @@
-import { ChangeEvent, MouseEvent } from "react";
+"use client";
+
+import { ChangeEvent, MouseEvent, useState } from "react";
 import { useSidebarContext } from "@/app/services/context/SidebarContext";
 import Folder from "@/app/interfaces/folder.interface";
 
@@ -13,16 +15,10 @@ interface Props {
 }
 
 export default function FolderComponent({ folder }: Props) {
-  const {
-    folders,
-    setFolders,
-    title,
-    setTitle,
-    editTitle,
-    setEditTitle,
-    deleteConfirm,
-    setDeleteConfirm,
-  } = useSidebarContext();
+  const [title, setTitle] = useState(folder.title);
+  const [editTitle, setEditTitle] = useState(false);
+  const [deleteFolderConfirm, setDeleteFolderConfirm] = useState(false);
+  const { folders, setFolders } = useSidebarContext();
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setTitle(e.target.value);
@@ -152,7 +148,7 @@ export default function FolderComponent({ folder }: Props) {
               </div>
             </button>
 
-            {deleteConfirm ? (
+            {deleteFolderConfirm ? (
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
@@ -162,7 +158,7 @@ export default function FolderComponent({ folder }: Props) {
                     <CheckIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteConfirm(false)}
+                    onClick={() => setDeleteFolderConfirm(false)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <ClearIcon />
@@ -179,7 +175,7 @@ export default function FolderComponent({ folder }: Props) {
                     <EditIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteConfirm(true)}
+                    onClick={() => setDeleteFolderConfirm(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <DeleteIcon />

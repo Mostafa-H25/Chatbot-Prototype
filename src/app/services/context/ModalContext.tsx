@@ -58,6 +58,7 @@ export default function ModalContext({ children }: Props) {
       isPromptModalOpen.conditional
     ) {
       setIsModalOpen(true);
+      console.log(isAuthenticationModalOpen);
     } else {
       setIsModalOpen(false);
     }

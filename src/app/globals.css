@@ -50,7 +50,6 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
-html,
-body {
+html, body {
   height: 100%;
 }

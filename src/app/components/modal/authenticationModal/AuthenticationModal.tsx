@@ -1,12 +1,14 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { useGlobalContext } from "@/app/services/context/GlobalContext";
 import { useModalContext } from "@/app/services/context/ModalContext";
 
 import GoogleIcon from "@mui/icons-material/Google";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+
+import { useRouter } from "next/navigation";
 
 interface Props {
   authenticationType: string;
@@ -23,6 +25,8 @@ export default function AuthenticationModal({
   const { setIsAuthenticationModalOpen } = useModalContext();
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   const [authenticatingUser, setAuthenticatingUser] = useState<Partial<User>>({
     email: "",
@@ -129,18 +133,26 @@ export default function AuthenticationModal({
       console.log("ERROR", error);
     }
   };
+  const handleSignin = () => {
+    // Perform logout actions if needed
+
+    // Redirect to login page while replacing the current route
+    router.push("/chats");
+  };
 
   const handleSubmit = (
     e: FormEvent<HTMLFormElement>,
     authenticationType: string
   ) => {
     e.preventDefault();
+    e.stopPropagation();
     if (authenticationType === "Sign In") {
       logIn(e);
     } else if (authenticationType === "Register") {
       register(e);
     }
   };
+
 
   return (
     <div className="bg-white dark:bg-[#202123] rounded-lg px-8 py-2 shadow-md max-w-md w-full text-black">
@@ -263,6 +275,7 @@ export default function AuthenticationModal({
             <button
               type="submit"
               disabled={isLoading}
+              onClick={handleSignin}
               className="my-2 w-full rounded-lg border px-4 py-2 shadow focus:outline-none border-neutral-800 border-opacity-50 bg-white font-bold text-black hover:bg-neutral-200"
             >
               Sign In

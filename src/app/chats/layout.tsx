@@ -1,7 +1,9 @@
+
+
 import ChatSidebar from "@/app/components/sidebar/chatSidebar/ChatSidebar";
 import PromptSideBar from "@/app/components/sidebar/promptSidebar/PromptSidebar";
 
-export default function RootLayout({
+export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;

@@ -1,28 +1,58 @@
-import { ChangeEvent, MouseEvent } from "react";
+"use client";
+import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
+import { useGlobalContext } from "@/app/services/context/GlobalContext";
 import { useSidebarContext } from "@/app/services/context/SidebarContext";
 import Folder from "@/app/interfaces/folder.interface";
 
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
+import ChatComponent from "../ChatComponent/ChatComponent";
+import { BlockPicker, TwitterPicker } from "react-color";
+
+import { IconCaretDown, IconCaretRight } from "@tabler/icons-react";
 
 interface Props {
   folder: Folder;
+  onDrop: (folderId: string, chatId: string) => void;
 }
 
-export default function FolderComponent({ folder }: Props) {
-  const {
-    folders,
-    setFolders,
-    title,
-    setTitle,
-    editTitle,
-    setEditTitle,
-    deleteConfirm,
-    setDeleteConfirm,
-  } = useSidebarContext();
+export default function FolderComponent({ folder, onDrop }: Props) {
+  const { chats, setChats } = useGlobalContext();
+  const [title, setTitle] = useState("");
+  const [editTitle, setEditTitle] = useState(false);
+  const [deleteFolderConfirm, setDeleteFolderConfirm] = useState(false);
+  const [isChatListOpen, setIsChatListOpen] = useState(false);
+  const { folders, setFolders } = useSidebarContext();
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [currentColor, setCurrentColor] = useState(folder.backgroundColor);
+  const colorPickerRef = useRef(null);
+  const [textColorClass, setTextColorClass] = useState("white");
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        showColorPicker &&
+        colorPickerRef.current &&
+        !colorPickerRef.current.contains(event.target as Node)
+      ) {
+        setShowColorPicker(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [showColorPicker]);
+  useEffect(() => {
+    if (folder && folder.backgroundColor) {
+      const brightness = getBrightness(folder.backgroundColor);
+      const newTextColorClass = brightness < 128 ? "white" : "black";
+      setTextColorClass(newTextColorClass);
+    }
+  }, [folder]);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setTitle(e.target.value);
@@ -87,6 +117,13 @@ export default function FolderComponent({ folder }: Props) {
       (folder: Folder) => folder.folderId !== id
     );
     setFolders(updatedFolders);
+    const chatsToRemove = folders.find((folder) => folder.folderId === id)?.chatIds;
+    if (chatsToRemove) {
+      const updatedChats = chats.filter(
+        (chat) => !chatsToRemove.includes(chat.chatId)
+      );
+      setChats(updatedChats);
+    }
     // try {
     //   const endpoint = `/api/folder/${id}`;
     //   const options = {
@@ -103,15 +140,64 @@ export default function FolderComponent({ folder }: Props) {
     // } catch (error) {
     //   console.log("ERROR", error);
     // }
+
+    // Remove all chats inside the deleted folder
+    
+  }
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
   };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const chatId = event.dataTransfer.getData("text/plain");
+    if (!folder.chatIds.includes(chatId)) {
+      console.log(
+        "Dropped chat with ID:",
+        chatId,
+        "into folder with ID:",
+        folder.folderId
+      );
+      onDrop(folder.folderId, chatId);
+    }
+  };
+
+  function toggleChatList() {
+    setIsChatListOpen((prev) => !prev);
+  }
+
+  const handleBackgroundColorChange = (color: string) => {
+    setCurrentColor(color.hex);
+    const updatedFolders = folders.map((f) =>
+      f.folderId === folder.folderId ? { ...f, backgroundColor: color.hex } : f
+    );
+    setFolders(updatedFolders);
+  };
+
+  function getBrightness(hexColor: string) {
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000;
+  }
 
   return (
     <>
-      <div className="relative flex items-center">
+      <div
+        className="relative flex items-center"
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
         {editTitle ? (
           <>
-            <button className="flex w-full cursor-pointer items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#343541]/90">
-              <PlayArrowIcon />
+            <button
+              className="flex w-full cursor-pointer  items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#343541]/90 border border-gray-500"
+              style={{
+                backgroundColor: folder.backgroundColor,
+              }}
+            >
+              <IconCaretRight size={18} color={textColorClass} />
               <input
                 type="text"
                 id="title"
@@ -121,7 +207,7 @@ export default function FolderComponent({ folder }: Props) {
                   handleChange(event)
                 }
                 autoFocus
-                className="mr-12 flex-1 overflow-hidden overflow-ellipsis border-neutral-400 bg-transparent text-left text-[12.5px] leading-3 text-white outline-none focus:border-neutral-100"
+                className={`mr-12 flex-1 overflow-hidden overflow-ellipsis border-neutral-400 bg-transparent text-left text-[12.5px] leading-3 text-${textColorClass} outline-none focus:border-neutral-100`}
               />
             </button>
 
@@ -145,9 +231,22 @@ export default function FolderComponent({ folder }: Props) {
           </>
         ) : (
           <>
-            <button className="flex w-full cursor-pointer items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#343541]/90">
-              <PlayArrowIcon />
-              <div className="relative max-h-5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap break-all text-left text-[12.5px] leading-3">
+            <button
+              className="flex w-full cursor-pointer my-2 items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#343541]/90 border border-gray-500"
+              onClick={toggleChatList}
+              style={{
+                backgroundColor: folder.backgroundColor,
+              }}
+            >
+              {isChatListOpen ? (
+                <IconCaretDown size={18} color={textColorClass} />
+              ) : (
+                <IconCaretRight size={18} color={textColorClass} />
+              )}
+
+              <div
+                className={`relative max-h-5 flex-1 overflow-hidden text-red whitespace-nowrap break-all text-left text-[12.5px] leading-3 text-${textColorClass}`}
+              >
                 {folder.title}
               </div>
             </button>
@@ -162,7 +261,7 @@ export default function FolderComponent({ folder }: Props) {
                     <CheckIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteConfirm(false)}
+                    onClick={() => setDeleteFolderConfirm(false)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <ClearIcon />
@@ -171,7 +270,26 @@ export default function FolderComponent({ folder }: Props) {
               </>
             ) : (
               <>
-                <div className="absolute right-1 z-10 flex text-gray-300">
+                <div className="absolute right-1  flex text-gray-300">
+                  <div>
+                    <div className="relative">
+                      <button
+                        className={`bg-${textColorClass} font-bold p-3 rounded-full transition`}
+                        onClick={() => setShowColorPicker(!showColorPicker)}
+                      ></button>
+                    </div>
+                    {showColorPicker && (
+                      <div
+                        className="absolute -right-1 top-9 z-50"
+                        ref={colorPickerRef}
+                      >
+                        <BlockPicker
+                          onChange={handleBackgroundColorChange}
+                          color={currentColor}
+                        />
+                      </div>
+                    )}
+                  </div>
                   <button
                     onClick={() => setEditTitle(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
@@ -179,7 +297,7 @@ export default function FolderComponent({ folder }: Props) {
                     <EditIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteConfirm(true)}
+                    onClick={() => setDeleteFolderConfirm(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <DeleteIcon />
@@ -190,6 +308,18 @@ export default function FolderComponent({ folder }: Props) {
           </>
         )}
       </div>
+      {isChatListOpen && (
+        <ul className="pl-3 border-l border-gray-300 mt-2">
+          {folder.chatIds.map((chatId) => {
+            const chat = chats.find((c) => c.chatId === chatId);
+            return (
+              <li key={chatId} className="mb-1 text-center">
+                {chat && <ChatComponent chat={chat} />}
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </>
   );
 }

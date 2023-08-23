@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import SidebarContext from "@/app/services/context/SidebarContext";
+import { useGlobalContext } from "@/app/services/context/GlobalContext";
 
 import ChatSidebarHeader from "./chatSidebarHeader/ChatSidebarHeader";
 import Search from "../components/search/Search";
@@ -11,10 +12,14 @@ import SidebarButton from "../components/sidebarButton/SidebarButton";
 
 export default function ChatSidebar() {
   const [isLeftSideBarOpen, setIsLeftSideBarOpen] = useState<boolean>(true);
-
+  const { theme } = useGlobalContext();
   return (
     <SidebarContext>
-      <section className="z-40 flex h-full bg-[#343541]">
+      <section
+        className={`z-40 flex h-full ${
+          theme === "dark" ? "bg-[#343541]" : "bg-white"
+        }`}
+      >
         {isLeftSideBarOpen ? (
           <>
             <div className="flex w-[260px] flex-col space-y-2 bg-[#202123] p-2 text-[14px] transition-all">
