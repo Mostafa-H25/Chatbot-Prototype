@@ -1,11 +1,13 @@
-import MainComponent from "../components/mainComponent/MainComponent";
-import Modal from "@/components/modal/Modal";
+import LandingHero from "@/app/components/login/landing-hero";
 
-export default function HomePage() {
+const LandingPage = () => {
   return (
-    <>
-      <MainComponent />
-      <Modal />
-    </>
+    <main className="h-full bg-[#111827] overflow-auto">
+      <div className="mx-auto max-w-screen-xl h-full w-full">
+        <LandingHero />
+      </div>
+    </main>
   );
-}
+};
+
+export default LandingPage;
