@@ -1,12 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
-import { useState } from "react";
+import { useModalContext } from "@/app/services/context/ModalContext";
 
 import TypewritterComponent from "typewriter-effect";
 import AuthenticationModal from "../modal/authenticationModal/AuthenticationModal";
-import { useModalContext } from "@/app/services/context/ModalContext";
 
 const LandingHero = () => {
   const { isAuthenticationModalOpen, setIsAuthenticationModalOpen } =

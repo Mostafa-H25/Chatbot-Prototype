@@ -1,7 +1,8 @@
-import { ChangeEvent, MouseEvent } from "react";
+"use client";
+
+import { ChangeEvent, MouseEvent, useState } from "react";
 import { useGlobalContext } from "@/app/services/context/GlobalContext";
 import { useModalContext } from "@/app/services/context/ModalContext";
-import { useSidebarContext } from "@/app/services/context/SidebarContext";
 import Prompt from "@/app/interfaces/prompt.interface";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -17,14 +18,10 @@ interface Props {
 export default function PromptComponent({ prompt }: Props) {
   const { prompts, setPrompts } = useGlobalContext();
   const { setIsPromptModalOpen } = useModalContext();
-  const {
-    title,
-    setTitle,
-    editTitle,
-    setEditTitle,
-    deleteConfirm,
-    setDeleteConfirm,
-  } = useSidebarContext();
+
+  const [title, setTitle] = useState(prompt.title);
+  const [deletePromptConfirm, setDeletePromptConfirm] = useState(false);
+  const [openEditTitle, setOpenEditTitle] = useState(false);
 
   const handleClick = () => {
     setIsPromptModalOpen({ conditional: true, prompt: prompt });
@@ -81,7 +78,7 @@ export default function PromptComponent({ prompt }: Props) {
         return prompt;
       })
     );
-    setEditTitle(false);
+    setOpenEditTitle(false);
   };
 
   const deletePrompt = async (id: string) => {
@@ -106,7 +103,7 @@ export default function PromptComponent({ prompt }: Props) {
   return (
     <>
       <div className="relative flex items-center">
-        {editTitle ? (
+        {openEditTitle ? (
           <>
             <button
               className="flex items-center gap-3 w-full rounded-lg bg-[#343541]/90 p-3 cursor-pointer text-sm transition-colors duration-200 hover:bg-[#343541]/90"
@@ -137,7 +134,7 @@ export default function PromptComponent({ prompt }: Props) {
                 <CheckIcon />
               </button>
               <button
-                onClick={() => setEditTitle(false)}
+                onClick={() => setOpenEditTitle(false)}
                 className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
               >
                 <ClearIcon />
@@ -156,7 +153,7 @@ export default function PromptComponent({ prompt }: Props) {
               </div>
             </button>
 
-            {deleteConfirm ? (
+            {deletePromptConfirm ? (
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
@@ -166,7 +163,7 @@ export default function PromptComponent({ prompt }: Props) {
                     <CheckIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteConfirm(false)}
+                    onClick={() => setDeletePromptConfirm(false)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <ClearIcon />
@@ -177,13 +174,13 @@ export default function PromptComponent({ prompt }: Props) {
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
-                    onClick={() => setEditTitle(true)}
+                    onClick={() => setOpenEditTitle(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <EditIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteConfirm(true)}
+                    onClick={() => setDeletePromptConfirm(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <DeleteIcon />

@@ -24,6 +24,8 @@ interface StateContext {
   setPrompts: any;
   chatTabs: ChatTab[];
   setChatTabs: any;
+  theme: string;
+  toggleTheme: any;
 }
 
 const initialState = {
@@ -37,6 +39,8 @@ const initialState = {
   setPrompts: (prompts: Prompt[]) => {},
   chatTabs: [],
   setChatTabs: (chatTabs: ChatTab[]) => {},
+  theme: "",
+  toggleTheme: () => {},
 };
 
 const AppContext = createContext<StateContext>(initialState);
@@ -53,51 +57,49 @@ export default function GlobalContext({ children }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [chatTabs, setChatTabs] = useState<ChatTab[]>([]);
+  const [theme, setTheme] = useState("dark");
 
-  const fetchChats = async () => {
-    try {
-      const endpoint = `/api/chat/`;
-      const options = {
-        method: "GET",
-        header: {
-          "Content-Type": "application/json",
-        },
-      };
-      const response = await fetch(endpoint, options);
-      const data = await response.json();
-      setChats(data);
-    } catch (error) {
-      console.log("ERROR", error);
-    }
-  };
-  const fetchPrompts = async () => {
-    try {
-      const endpoint = `/api/prompt/`;
-      const options = {
-        method: "GET",
-        header: {
-          "Content-Type": "application/json",
-        },
-      };
-      const response = await fetch(endpoint, options);
-      const data = await response.json();
-      setPrompts(data);
-    } catch (error) {
-      console.log("ERROR", error);
-    }
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
   };
 
-  useEffect(() => {
-    fetchChats();
-    fetchPrompts();
-  }, []);
+  // const fetchChats = async () => {
+  //   try {
+  //     const endpoint = `/api/chat/`;
+  //     const options = {
+  //       method: "GET",
+  //       header: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     };
+  //     const response = await fetch(endpoint, options);
+  //     const data = await response.json();
+  //     setChats(data);
+  //   } catch (error) {
+  //     console.log("ERROR", error);
+  //   }
+  // };
+  // const fetchPrompts = async () => {
+  //   try {
+  //     const endpoint = `/api/prompt/`;
+  //     const options = {
+  //       method: "GET",
+  //       header: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     };
+  //     const response = await fetch(endpoint, options);
+  //     const data = await response.json();
+  //     setPrompts(data);
+  //   } catch (error) {
+  //     console.log("ERROR", error);
+  //   }
+  // };
 
-  // const [currentTheme, setCurrentTheme] = useState("Light");
-
-  // const setTheme = (e) => {
-  //   setCurrentTheme(e.target.value);
-  //   localStorage.setItem("themeMode", e.target.value);
-  // }
+  // useEffect(() => {
+  //   fetchChats();
+  //   fetchPrompts();
+  // }, []);
 
   return (
     <AppContext.Provider
@@ -112,6 +114,8 @@ export default function GlobalContext({ children }: Props) {
         setPrompts,
         chatTabs,
         setChatTabs,
+        theme,
+        toggleTheme,
       }}
     >
       {children}

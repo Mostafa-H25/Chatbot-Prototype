@@ -4,5 +4,6 @@ export default interface Folder {
   title: string;
   type: string;
   createdAt: Date;
+  backgroundColor: string;
   isDeleted: boolean;
 }

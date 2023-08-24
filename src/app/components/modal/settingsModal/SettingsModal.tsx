@@ -2,11 +2,8 @@ import { useModalContext } from "@/app/services/context/ModalContext";
 import { useGlobalContext } from "@/app/services/context/GlobalContext";
 
 export default function SettingsModal() {
+  const { theme, toggleTheme } = useGlobalContext();
   const { setIsSettingsModalOpen } = useModalContext();
-
-export default function SettingsModal() {
-  const { theme, toggleTheme } =
-    useGlobalContext();
 
   return (
     <>

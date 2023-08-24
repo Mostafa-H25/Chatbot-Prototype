@@ -38,7 +38,7 @@ export default function ConversationsTab({ id, chat }: Props) {
       if (chatTabs.length === 1) {
         router.push("/chats");
       } else {
-        router.push(chatTabs[chatTabs.length - 1].id);
+        router.push(chatTabs[chatTabs.length - 2].id);
       }
     }
   };

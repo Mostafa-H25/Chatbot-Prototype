@@ -1,4 +1,4 @@
-import { useGlobalContext } from "@/services/context/GlobalContext";
+import { useGlobalContext } from "@/app/services/context/GlobalContext";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 

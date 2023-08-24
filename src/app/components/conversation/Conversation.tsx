@@ -13,8 +13,7 @@ interface Props {
 }
 
 export default function Conversation({ id }: Props) {
-  const { chats, messages, setMessages } = useGlobalContext();
-  console.log(chats);
+  const { chats, messages, setMessages, theme } = useGlobalContext();
 
   const fetchMessages = async () => {
     try {

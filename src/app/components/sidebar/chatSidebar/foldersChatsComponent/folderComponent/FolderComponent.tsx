@@ -35,7 +35,7 @@ export default function FolderComponent({ folder, onDrop }: Props) {
       if (
         showColorPicker &&
         colorPickerRef.current &&
-        !colorPickerRef.current.contains(event.target as Node)
+        colorPickerRef.current.contains(event.target as Node)
       ) {
         setShowColorPicker(false);
       }
@@ -117,7 +117,9 @@ export default function FolderComponent({ folder, onDrop }: Props) {
       (folder: Folder) => folder.folderId !== id
     );
     setFolders(updatedFolders);
-    const chatsToRemove = folders.find((folder) => folder.folderId === id)?.chatIds;
+    const chatsToRemove = folders.find(
+      (folder) => folder.folderId === id
+    )?.chatIds;
     if (chatsToRemove) {
       const updatedChats = chats.filter(
         (chat) => !chatsToRemove.includes(chat.chatId)
@@ -142,8 +144,7 @@ export default function FolderComponent({ folder, onDrop }: Props) {
     // }
 
     // Remove all chats inside the deleted folder
-    
-  }
+  };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -251,7 +252,7 @@ export default function FolderComponent({ folder, onDrop }: Props) {
               </div>
             </button>
 
-            {deleteConfirm ? (
+            {deleteFolderConfirm ? (
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button

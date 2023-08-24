@@ -12,10 +12,9 @@ interface Props {
 }
 
 export default function MessageInput({ id }: Props) {
-  const { chats, setChats, messages, setMessages } = useGlobalContext();
+  const { chats, setChats, messages, setMessages, theme } = useGlobalContext();
   const [messageContent, setMessageContent] = useState<string>("");
   const textareaRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -48,9 +47,9 @@ export default function MessageInput({ id }: Props) {
 
     let messageCounter = String(messages.length! + 1);
     try {
-      setIsLoading(true);
       const message = messageContent;
-      const endpoint = `/api/chat/${id}/message`;
+      // const endpoint = `/api/chat/${id}/message`;
+      const endpoint = `/api/chat/${id}/get-response`;
       const options = {
         method: "POST",
         header: {
@@ -59,28 +58,18 @@ export default function MessageInput({ id }: Props) {
         body: JSON.stringify({ message }),
       };
       const response = await fetch(endpoint, options);
+      console.log(message);
       const data = await response.json();
-      // dummy data
-      const newMessage: Message = {
-        messageId: messageCounter,
-        chatId: String(id),
-        userId: "1",
-        question: messageContent,
-        answer: "Hello Iam AI. Iam going to destroy the world.",
-        createdAt: new Date(),
-        isDeleted: false,
-      };
-      setMessages({ ...messages, newMessage });
+      setMessages({ ...messages, data });
       setChats(
         chats.map((chat: Chat) => {
           if (chat.chatId === id) {
-            chat.modifiedAt = newMessage.createdAt;
+            chat.modifiedAt = new Date();
             return chat;
           }
           return chat;
         })
       );
-      setIsLoading(false);
       setMessageContent("");
     } catch (error) {
       console.log("ERROR", error);
