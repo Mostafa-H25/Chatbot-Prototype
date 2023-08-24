@@ -11,12 +11,14 @@ import SidebarContext, {
   useSidebarContext,
 } from "@/services/context/SidebarContext";
 import { useGlobalContext } from "@/services/context/GlobalContext";
+import { useSelector } from "react-redux";
 
 export default function ChatSidebar() {
   const [isLeftSideBarOpen, setIsLeftSideBarOpen] = useState(true);
-  const { theme } = useGlobalContext();
+  //const { theme } = useGlobalContext();
+  const { theme } = useSelector((state) => state.app);
   return (
-    <SidebarContext>
+    // <SidebarContext>
       <section
         className={`z-40 flex h-full ${
           theme === "dark" ? "bg-[#343541]" : "bg-white"
@@ -51,6 +53,6 @@ export default function ChatSidebar() {
           />
         )}
       </section>
-    </SidebarContext>
+    // </SidebarContext>
   );
 }

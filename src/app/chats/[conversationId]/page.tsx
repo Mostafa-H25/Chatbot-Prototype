@@ -5,13 +5,14 @@ import { useGlobalContext } from "@/services/context/GlobalContext";
 
 import Conversation from "@/components/conversation/Conversation";
 import ConversationsTab from "@/components/conversationsTab/ConversationsTab";
-
+import { useSelector } from "react-redux";
 export default function ConversationPage({
   params,
 }: {
   params: { conversationId: string };
 }) {
-  const { chats, theme } = useGlobalContext();
+  // const { chats, theme } = useGlobalContext();
+  const {chats, theme } = useSelector((state) => state.app);
 
   const chat = chats.find((chat) => chat.id === params.conversationId);
 

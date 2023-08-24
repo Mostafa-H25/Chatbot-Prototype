@@ -1,7 +1,7 @@
 import { useGlobalContext } from "@/services/context/GlobalContext";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-
+import {useSelector} from 'react-redux'
 interface Props {
   side: string;
   state: boolean;
@@ -9,7 +9,8 @@ interface Props {
 }
 
 export default function SidebarButton({ side, state, toggleState }: Props) {
-  const { theme } = useGlobalContext();
+  // const { theme } = useGlobalContext();
+  const {theme} =  useSelector((state)=> state.app)
   function handleClick(): void {
     toggleState(!state);
   }

@@ -12,7 +12,7 @@ import Prompt from "@/interfaces/prompt.interface";
 import { DummyUser } from "@/dummyData/dummyUser";
 import { ChatTab } from "@/interfaces/chatTab.interface";
 import PromptModal from "@/interfaces/promptModal.interface";
-
+import {User} from "@/interfaces/user.interface";
 interface StateContext {
   user: User | undefined;
   setUser: any;

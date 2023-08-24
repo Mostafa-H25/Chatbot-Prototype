@@ -10,36 +10,41 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useRouter } from "next/navigation";
 import { ChatTab } from "@/interfaces/chatTab.interface";
 import { useSidebarContext } from "@/services/context/SidebarContext";
-
+import { useSelector , useDispatch } from "react-redux";
+import { setChatTabs } from "@/services/redux/reducers/appSlice";
 interface Props {
   id: string;
   chat: Chat;
 }
 
 export default function ConversationsTab({ id, chat }: Props) {
-  const { chatTabs, setChatTabs, theme } = useGlobalContext();
+ // const { chatTabs, setChatTabs, theme } = useGlobalContext();
+  const { chatTabs ,theme } = useSelector((state)=>state.app);
+  const dispatch = useDispatch();
   const router = useRouter();
 
   useEffect(() => {
     if (!chatTabs.find((chatTab) => chatTab.id === chat?.id))
-      setChatTabs([...chatTabs, { id: chat!.id, title: chat!.title }]);
-  }, [id]);
+      dispatch(setChatTabs([...chatTabs, { id: chat!.id, title: chat!.title }]));
+  }, [id ]);
+  console.log(chatTabs)
 
   const handleClick = (id: string) => {
-    setChatTabs((prevState: ChatTab[]) => {
-      const currentState: ChatTab[] = prevState.filter(
+    dispatch((dispatch, getState) => {
+      const currentState: ChatTab[] = getState().app.chatTabs.filter(
         (chatTab) => chatTab.id !== id
       );
-      return currentState;
-    });
+      dispatch(setChatTabs(currentState));
 
-    if (chat.id === id) {
-      if (chatTabs.length === 1) {
-        router.push("/chats");
-      } else {
-        router.push(chatTabs[chatTabs.length - 1].id);
+      // const chatTabs = useSelector((state)=> state.app) // Get updated chatTabs from the state
+      if (chat.id === id) {
+        if (chatTabs.length === 1) {
+          router.push("/chats");
+        } else {
+          router.push(chatTabs[chatTabs.length - 1].id);
+        }
       }
-    }
+    });
   };
 
   return (
@@ -48,7 +53,7 @@ export default function ConversationsTab({ id, chat }: Props) {
         theme === "dark" ? " bg-[#343541]" : "bg-white"
       }`}
     >
-      {chatTabs.map((chatTab) => (
+      {Array.isArray(chatTabs) && chatTabs.map((chatTab) => (
         <div
           key={chatTab.id}
           className="relative flex justify-between items-center "

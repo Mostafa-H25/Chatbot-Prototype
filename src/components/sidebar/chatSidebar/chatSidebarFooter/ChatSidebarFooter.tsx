@@ -9,18 +9,22 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import { useSelector , useDispatch } from 'react-redux';
+import {setIsSettingsModalOpen} from '@/services/redux/reducers/appSlice'
+import { setUser , setChats } from '@/services/redux/reducers/appSlice'
 export default function ChatSidebarFooter() {
-  const {
-    user,
-    setUser,
-    chats,
-    setChats,
-    isSettingsModalOpen,
-    setIsSettingsModalOpen,
-    isAuthenticationModalOpen,
-    setIsAuthenticationModalOpen,
-  } = useGlobalContext();
-
+    // const {
+    //   user,
+    //   setUser,
+    //   chats,
+    //   setChats,
+    //   isSettingsModalOpen,
+    //   setIsSettingsModalOpen,
+    //   isAuthenticationModalOpen,
+    //   setIsAuthenticationModalOpen,
+    // } = useGlobalContext();
+  const { user , chats  } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
   const handleDeleteClick = () => {
     Swal.fire({
       title: "Are you sure?",
@@ -32,7 +36,7 @@ export default function ChatSidebarFooter() {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        setChats([]);
+        dispatch(setChats([]));
         // Call the API or perform any other necessary action here
         Swal.fire("Deleted!", "Your item has been deleted.", "success");
       }
@@ -43,7 +47,7 @@ export default function ChatSidebarFooter() {
 
   const handleLogout = () => {
     // Perform logout actions if needed
-    setUser({ ...user, isAuthenticated: false });
+    dispatch(setUser({ ...user, isAuthenticated: false }));
     // Redirect to login page while replacing the current route
     router.replace("/");
   };
@@ -90,7 +94,7 @@ export default function ChatSidebarFooter() {
         </Link>
       </button>
       <button
-        onClick={() => setIsSettingsModalOpen(true)}
+        onClick={() => dispatch(setIsSettingsModalOpen(true))}
         className="flex w-full cursor-pointer select-none items-center gap-3 rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
       >
         <SettingsIcon />

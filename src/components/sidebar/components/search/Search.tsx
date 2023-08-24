@@ -8,13 +8,14 @@ import Folder from "@/interfaces/folder.interface";
 
 import CloseIcon from "@mui/icons-material/Close";
 import { useSidebarContext } from "@/services/context/SidebarContext";
-
+import {setSearch} from '@/services/redux/reducers/slideBaReducer'
+import { useSelector } from "react-redux";
 interface Props {
   sidebar: string;
 }
 
 export default function Search({ sidebar }: Props) {
-  const { search, setSearch, onSearch, folders, setFolders } =
+  const { search, setSearch, onSearch } =
     useSidebarContext();
   const [isLoading, setIsLoading] = useState(false);
 

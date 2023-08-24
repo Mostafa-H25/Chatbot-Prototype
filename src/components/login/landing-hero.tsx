@@ -9,10 +9,13 @@ import KeyIcon from "@mui/icons-material/Key";
 
 import TypewritterComponent from "typewriter-effect";
 import AuthenticationModal from "../modal/authenticationModal/AuthenticationModal";
+import { setIsAuthenticationModalOpen } from "@/services/redux/reducers/appSlice";
+import { useSelector , useDispatch } from "react-redux";
 
 const LandingHero = () => {
-  const { isAuthenticationModalOpen, setIsAuthenticationModalOpen } =
-    useGlobalContext();
+  //const { isAuthenticationModalOpen, setIsAuthenticationModalOpen } =useGlobalContext();
+    const { isAuthenticationModalOpen } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
   type AuthenticationType = "Sign In" | "Register";
   const [authenticationType, setAuthenticationType] =
     useState<AuthenticationType>("Sign In");
@@ -20,11 +23,11 @@ const LandingHero = () => {
 
   const openAuthenticationModal = (type: AuthenticationType) => {
     setAuthenticationType(type);
-    setIsAuthenticationModalOpen(true);
+    dispatch(setIsAuthenticationModalOpen(true));
   };
 
   const closeAuthenticationModal = () => {
-    setIsAuthenticationModalOpen(false);
+    dispatch(setIsAuthenticationModalOpen(false));
     setAuthenticationType("Sign In");
   };
 

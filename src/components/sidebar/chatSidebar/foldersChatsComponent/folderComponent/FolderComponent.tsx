@@ -12,7 +12,9 @@ import { useGlobalContext } from "@/services/context/GlobalContext";
 import ChatComponent from "../ChatComponent/ChatComponent";
 import { useSidebarContext } from "@/services/context/SidebarContext";
 import { BlockPicker, TwitterPicker } from "react-color";
-
+import { setChats } from "@/services/redux/reducers/appSlice";
+import { setFolders } from "@/services/redux/reducers/slideBaReducer";
+import { useSelector , useDispatch } from "react-redux";
 import { IconCaretDown, IconCaretRight } from "@tabler/icons-react";
 
 interface Props {
@@ -21,12 +23,18 @@ interface Props {
 }
 
 export default function FolderComponent({ folder, onDrop }: Props) {
-  const { chats, setChats } = useGlobalContext();
+  //const { chats, setChats } = useGlobalContext();
+  const { chats } = useSelector((state)=> state.app);
+ // const { folders, setFolders } = useSidebarContext();
+  const { folders } =  useSelector((state)=> state.slide);
+
+  const dispatch = useDispatch();
+
   const [title, setTitle] = useState("");
   const [editTitle, setEditTitle] = useState(false);
   const [deleteFolderConfirm, setDeleteFolderConfirm] = useState(false);
   const [isChatListOpen, setIsChatListOpen] = useState(false);
-  const { folders, setFolders } = useSidebarContext();
+
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [currentColor, setCurrentColor] = useState(folder.backgroundColor);
   const colorPickerRef = useRef(null);
@@ -63,21 +71,23 @@ export default function FolderComponent({ folder, onDrop }: Props) {
   function editFolderName(e: any, id: string) {
     // e.preventDefault();
 
-    setFolders(
+    dispatch(setFolders(
       folders.map((folder: Folder) => {
         if (folder.id === id) {
-          folder.title = title;
-          return folder;
+          return {
+            ...folder, // Spread the existing properties of the folder
+            title: title, // Update the title property
+          };
         }
         return folder;
       })
-    );
+    ));
     setEditTitle(false);
   }
 
   function deleteFolder(id: string) {
     const updatedFolders = folders.filter((folder: Folder) => folder.id !== id);
-    setFolders(updatedFolders);
+    dispatch(setFolders(updatedFolders));
 
     // Remove all chats inside the deleted folder
     const chatsToRemove = folders.find((folder) => folder.id === id)?.chatIds;
@@ -85,7 +95,7 @@ export default function FolderComponent({ folder, onDrop }: Props) {
       const updatedChats = chats.filter(
         (chat) => !chatsToRemove.includes(chat.id)
       );
-      setChats(updatedChats);
+      dispatch(setChats(updatedChats));
     }
   }
 
@@ -116,7 +126,7 @@ export default function FolderComponent({ folder, onDrop }: Props) {
     const updatedFolders = folders.map((f) =>
       f.id === folder.id ? { ...f, backgroundColor: color.hex } : f
     );
-    setFolders(updatedFolders);
+    dispatch(setFolders(updatedFolders));
   };
 
   function getBrightness(hexColor: string) {

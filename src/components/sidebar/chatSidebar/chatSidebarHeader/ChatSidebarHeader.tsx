@@ -5,27 +5,36 @@ import { useGlobalContext } from "@/services/context/GlobalContext";
 import AddIcon from "@mui/icons-material/Add";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import { useSidebarContext } from "@/services/context/SidebarContext";
-
+import { setChats } from "@/services/redux/reducers/appSlice";
+import { useSelector , useDispatch } from "react-redux";
+import {setFolders} from '@/services/redux/reducers/slideBaReducer'
+import moment from "moment";
 export default function ChatSidebarHeader() {
-  const { user, chats, setChats } = useGlobalContext();
-  const { folders, setFolders } = useSidebarContext();
+  // const { user, chats, setChats } = useGlobalContext();
+
+  const {user, chats } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
+
+  // const { folders, setFolders } = useSidebarContext();
+  const {folders } = useSelector((state) => state.slide);
+
   function addNewChat() {
     let counter = chats.length + 1;
-    setChats([
+    dispatch(setChats([
       ...chats,
       {
         id: String(counter),
         title: `New Conversation ${counter}`,
         conversation: [],
         modifiedAt: new Date(),
-        createdAt: new Date(),
+        createdAt:new Date(),
       },
-    ]);
+    ]));
   }
 
   function addNewFolder() {
     let counter = folders.length + 1;
-    setFolders([
+    dispatch(setFolders([
       ...folders,
       {
         id: String(counter),
@@ -34,7 +43,7 @@ export default function ChatSidebarHeader() {
         createdAt: new Date(),
         chatIds: [],
       },
-    ]);
+    ]));
   }
 
   return (

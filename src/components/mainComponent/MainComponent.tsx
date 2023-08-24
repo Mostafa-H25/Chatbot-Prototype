@@ -1,8 +1,9 @@
 "use client";
 import { useGlobalContext } from "@/services/context/GlobalContext";
-
+import { useSelector } from "react-redux";
 export default function MainComponent() {
-  const { theme } = useGlobalContext();
+  const { theme } = useSelector((state) => state.app);
+  //const { theme } = useGlobalContext();
   return (
     <main className="flex flex-1 text-black">
       <div

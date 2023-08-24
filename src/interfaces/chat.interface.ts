@@ -1,5 +1,5 @@
 import Message from "./message.interface";
-
+import {User} from './user.interface'
 export default interface Chat {
   id: string;
   title: string;

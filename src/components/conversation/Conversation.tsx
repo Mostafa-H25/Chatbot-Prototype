@@ -8,7 +8,8 @@ import { useGlobalContext } from "@/services/context/GlobalContext";
 import { useRef } from "react";
 
 import Chat from "@/interfaces/chat.interface";
-
+import { setChats } from "@/services/redux/reducers/appSlice";
+import { useSelector , useDispatch } from "react-redux";
 import SendIcon from "@mui/icons-material/Send";
 
 interface Props {
@@ -16,7 +17,9 @@ interface Props {
 }
 
 export default function Conversation({ id }: Props) {
-  const { user, chats, setChats, theme } = useGlobalContext();
+  //const { user, chats, theme } = useGlobalContext();
+  const { user, chats, theme } = useSelector((state)=> state.app);
+  const dispatch = useDispatch()
   const [messageContent, setMessageContent] = useState("");
   const textareaRef = useRef(null);
 
@@ -37,42 +40,52 @@ export default function Conversation({ id }: Props) {
       textareaRef.current.style.height = "auto";
     }
     let messageCounter = String(chat?.conversation.length! + 1);
-    setChats(
+    dispatch(setChats(
       chats.map((chat: Chat) => {
         if (chat.id === id) {
-          chat.conversation.push({
-            id: messageCounter,
-            user: user,
-            content: messageContent,
-            createdAt: new Date(),
-          });
-          chat.modifiedAt = new Date();
-          return chat;
+          return {
+            ...chat,
+            conversation: [
+              ...chat.conversation,
+              {
+                id: messageCounter,
+                user: user,
+                content: messageContent,
+                createdAt: new Date(),
+              }
+            ],
+            modifiedAt: new Date(),
+          };
         }
         return chat;
       })
-    );
+    ));
     setMessageContent("");
     messageCounter = String(chat?.conversation.length! + 1);
-    setChats(
+    dispatch(setChats(
       chats.map((chat: Chat) => {
         if (chat.id === id) {
-          chat.conversation.push({
-            id: messageCounter,
-            user: undefined,
-            content: `hi, how are you. i am an artificial intelligence bot 
-                      here to support you reach the results you are looking 
-                      for. ask me about anything you need to know about. there 
-                      seems to be an error. please contact the customer service 
-                      to get the error as fixed as soon as possible. thank you.`,
-            createdAt: new Date(),
-          });
-          chat.modifiedAt = new Date();
-          return chat;
+          return {
+            ...chat,
+            conversation: [
+              ...chat.conversation,
+              {
+                id: messageCounter,
+                user: undefined,
+                content: `hi, how are you. i am an artificial intelligence bot
+                          here to support you reach the results you are looking
+                          for. ask me about anything you need to know about. there
+                          seems to be an error. please contact the customer service
+                          to get the error as fixed as soon as possible. thank you.`,
+                createdAt: new Date(),
+              },
+            ],
+            modifiedAt: new Date(),
+          };
         }
         return chat;
       })
-    );
+    ));
   };
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -87,10 +100,35 @@ export default function Conversation({ id }: Props) {
 
   const chat = chats.find((chat: Chat) => chat.id === id);
 
-  chat?.conversation.sort((a, b) => {
-    return Number(b.createdAt) - Number(a.createdAt);
-  });
+  // chat?.conversation.sort((a, b) => {
+  //   return Number(b.createdAt) - Number(a.createdAt);
+  // });
+  const chatToSort = chats.find((chat) => chat.id === id);
 
+  if (chatToSort) {
+    // Create a copy of the conversation array and sort it
+    const sortedConversation = [...chatToSort.conversation].sort(
+      (a, b) => Number(b.createdAt) - Number(a.createdAt)
+    );
+
+    // Update the chat object with the sorted conversation
+    const updatedChat = {
+      ...chatToSort,
+      conversation: sortedConversation,
+    };
+
+    // Find the index of the chat in the array
+    const chatIndex = chats.findIndex((chat) => chat.id === id);
+
+    if (chatIndex !== -1) {
+      // Create a new copy of the chats array with the updated chat
+      const updatedChats = [...chats];
+      updatedChats[chatIndex] = updatedChat;
+
+      // Now you can update your Redux state with the updatedChats array
+      // dispatch(setChats(updatedChats));
+    }
+  }
   return (
     <>
       {chats.find((chat: Chat) => chat.id.includes(id)) ? (

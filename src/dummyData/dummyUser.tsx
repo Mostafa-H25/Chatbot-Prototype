@@ -1,3 +1,4 @@
+
 export const DummyUser = {
   id: "1",
   username: "user",

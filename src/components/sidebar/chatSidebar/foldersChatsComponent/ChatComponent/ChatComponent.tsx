@@ -13,15 +13,21 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import ChatIcon from "@mui/icons-material/Chat";
 import { useSidebarContext } from "@/services/context/SidebarContext";
-
+import { setChats } from "@/services/redux/reducers/appSlice";
+import { useDispatch , useSelector } from "react-redux";
+import {setFolders} from '@/services/redux/reducers/slideBaReducer'
 interface Props {
   chat: Chat;
 }
 
 export default function ChatComponent({ chat }: Props) {
-  const { chats, setChats } = useGlobalContext();
-  const { folders, setFolders } = useSidebarContext();
 
+  const { chats } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
+  // const { chats, setChats } = useGlobalContext();
+
+
+  const { folders } = useSelector((state) => state.slide);
   const [title, setTitle] = useState("");
   const [deleteChatConfirm, setDeleteChatConfirm] = useState(false);
   const [openEditTitle, setOpenEditTitle] = useState(false);
@@ -31,27 +37,37 @@ export default function ChatComponent({ chat }: Props) {
   }
 
   function editChatName(e: MouseEvent<HTMLButtonElement>, id: string) {
-    // e.preventDefault();
-    setChats(
-      chats.map((chat: Chat) => {
-        if (chat.id === id) {
-          chat.title = title;
-          return chat;
-        }
-        return chat;
-      })
-    );
+    // Find the chat to be edited
+    const chatToEdit = chats.find((chat) => chat.id === id);
+
+    if (chatToEdit) {
+      // Create a new chat object with the updated title
+      const updatedChat = {
+        ...chatToEdit,
+        title: title, // Replace title with the new title
+      };
+
+      // Create a new array of chats with the updated chat
+      const updatedChats = chats.map((chat) =>
+        chat.id === id ? updatedChat : chat
+      );
+
+      // Dispatch the action to update the chats
+      dispatch(setChats(updatedChats));
+    }
+
     setOpenEditTitle(false);
   }
 
+
   function deleteChat(id: string) {
-    setChats(chats.filter((chat: Chat) => chat.id !== id));
+    dispatch(setChats(chats.filter((chat: Chat) => chat.id !== id)));
 
     const updatedFolders = folders.map((folder) => ({
       ...folder,
       chatIds: folder.chatIds.filter((chatId) => chatId !== id),
     }));
-    setFolders(updatedFolders);
+    dispatch(setFolders(updatedFolders));
   }
 
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
