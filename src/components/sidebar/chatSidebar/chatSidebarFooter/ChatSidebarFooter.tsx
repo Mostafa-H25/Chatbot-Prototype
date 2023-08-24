@@ -1,8 +1,7 @@
-"use client";
-
 import Link from "next/link";
-
 import { useGlobalContext } from "@/services/context/GlobalContext";
+import { useModalContext } from "@/services/context/ModalContext";
+import { useSidebarContext } from "@/services/context/SidebarContext";
 
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
@@ -13,18 +12,11 @@ import { useSelector , useDispatch } from 'react-redux';
 import {setIsSettingsModalOpen} from '@/services/redux/reducers/appSlice'
 import { setUser , setChats } from '@/services/redux/reducers/appSlice'
 export default function ChatSidebarFooter() {
-    // const {
-    //   user,
-    //   setUser,
-    //   chats,
-    //   setChats,
-    //   isSettingsModalOpen,
-    //   setIsSettingsModalOpen,
-    //   isAuthenticationModalOpen,
-    //   setIsAuthenticationModalOpen,
-    // } = useGlobalContext();
   const { user , chats  } = useSelector((state) => state.app);
   const dispatch = useDispatch();
+
+
+
   const handleDeleteClick = () => {
     Swal.fire({
       title: "Are you sure?",
@@ -45,6 +37,25 @@ export default function ChatSidebarFooter() {
 
   const router = useRouter();
 
+  // const handleLogout = async () => {
+  //   try {
+  //     const userId = user?.userId;
+  //     const endpoint = "/api/logout";
+  //     const options = {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ userId }),
+  //     };
+  //     const response = await fetch(endpoint, options);
+  //     const data = await response.json();
+  //     // toast
+  //     console.log("you are logged out");
+  //   } catch (error) {
+  //     console.log("ERROR", error);
+  //   }
+  // };
   const handleLogout = () => {
     // Perform logout actions if needed
     dispatch(setUser({ ...user, isAuthenticated: false }));
@@ -57,7 +68,7 @@ export default function ChatSidebarFooter() {
       {chats.length > 0 && (
         <>
           <button
-            onClick={handleDeleteClick}
+            onClick={() => handleDeleteClick()}
             className="flex w-full cursor-pointer select-none items-center gap-3 rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
           >
             <FileUploadIcon />
@@ -100,18 +111,15 @@ export default function ChatSidebarFooter() {
         <SettingsIcon />
         <span>Settings</span>
       </button>
-      {/* user.isAuthenticated */}
-      {user?.isAuthenticated === true && (
-        <>
-          <button
-            onClick={handleLogout}
-            className="flex w-full cursor-pointer select-none items-center gap-3 rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
-          >
-            <SettingsIcon />
-            <span>Logout</span>
-          </button>
-        </>
-      )}
+
+      {/* user.logout */}
+      <button
+        onClick={() => handleLogout()}
+        className="flex w-full cursor-pointer select-none items-center gap-3 rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
+      >
+        <SettingsIcon />
+        <span>Logout</span>
+      </button>
     </div>
   );
 }

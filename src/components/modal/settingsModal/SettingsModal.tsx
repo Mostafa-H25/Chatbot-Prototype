@@ -1,9 +1,9 @@
+import { useModalContext } from "@/services/context/ModalContext";
 import { useGlobalContext } from "@/services/context/GlobalContext";
-import { useSidebarContext } from "@/services/context/SidebarContext";
 
 export default function SettingsModal() {
-  const { isSettingsModalOpen, setIsSettingsModalOpen, theme, toggleTheme } =
-    useGlobalContext();
+  const { theme, toggleTheme } = useGlobalContext();
+  const { setIsSettingsModalOpen } = useModalContext();
 
   return (
     <>
@@ -18,7 +18,7 @@ export default function SettingsModal() {
         <option value="light">Light mode</option>
       </select>
       <button
-        onClick={() => setIsSettingsModalOpen(!isSettingsModalOpen)}
+        onClick={() => setIsSettingsModalOpen(false)}
         type="button"
         className="w-full px-4 py-2 mt-6 border rounded-lg shadow border-neutral-800 bg-white text-black focus:outline-none hover:bg-neutral-300"
       >

@@ -1,12 +1,9 @@
 "use client";
 
-import { ChangeEvent, MouseEvent, ReactNode, useState } from "react";
-
+import { ChangeEvent, MouseEvent, useState } from "react";
 import { useGlobalContext } from "@/services/context/GlobalContext";
-
+import { useModalContext } from "@/services/context/ModalContext";
 import Prompt from "@/interfaces/prompt.interface";
-
-import PromptModal from "@/components/modal/promptModal/PromptModal";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -19,8 +16,9 @@ interface Props {
 }
 
 export default function PromptComponent({ prompt }: Props) {
-  const { prompts, setPrompts, isPromptModalOpen, setIsPromptModalOpen } =
-    useGlobalContext();
+  const { prompts, setPrompts } = useGlobalContext();
+  const { setIsPromptModalOpen } = useModalContext();
+
   const [title, setTitle] = useState(prompt.title);
   const [deletePromptConfirm, setDeletePromptConfirm] = useState(false);
   const [openEditTitle, setOpenEditTitle] = useState(false);
@@ -33,11 +31,47 @@ export default function PromptComponent({ prompt }: Props) {
     setTitle(e.target.value);
   }
 
-  function editPromptName(e: MouseEvent<HTMLButtonElement>, id: string) {
+  const editPromptName = async (
+    e: MouseEvent<HTMLButtonElement>,
+    id: string
+  ) => {
     e.preventDefault();
+    // try {
+    //   const prompt: Prompt = prompts.find(
+    //     (prompt: Prompt) => prompt.promptId === id
+    //   )!;
+    //   if (prompt) prompt.title = e.currentTarget.value;
+    //   const endpoint = `/api/prompt/${id}`;
+    //   const options = {
+    //     method: "PUT",
+    //     header: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ prompt }),
+    //   };
+    //   const response = await fetch(endpoint, options);
+    //   const data = await response.json();
+    //   // dummy data
+    //   const updatedPrompt: Prompt = {
+    //     ...prompt,
+    //     [e.currentTarget.name]: e.currentTarget.value,
+    //   };
+    //   setPrompts(
+    //     prompts.map((prompt: Prompt) => {
+    //       if (prompt.promptId === id) {
+    //         prompt = updatedPrompt;
+    //         return prompt;
+    //       }
+    //       return prompt;
+    //     })
+    //   );
+    // } catch (error) {
+    //   console.log("ERROR", error);
+    // }
+
     setPrompts(
       prompts.map((prompt: Prompt) => {
-        if (prompt.id === id) {
+        if (prompt.promptId === id) {
           prompt.title = title;
           return prompt;
         }
@@ -45,11 +79,26 @@ export default function PromptComponent({ prompt }: Props) {
       })
     );
     setOpenEditTitle(false);
-  }
+  };
 
-  function deletePrompt(id: number) {
-    setPrompts(prompts.filter((prompt: Prompt) => prompt.id !== id));
-  }
+  const deletePrompt = async (id: string) => {
+    setPrompts(prompts.filter((prompt: Prompt) => prompt.promptId !== id));
+    // try {
+    //   const endpoint = `/api/prompt/${id}`;
+    //   const options = {
+    //     method: "DELETE",
+    //     header: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   };
+    //   const response = await fetch(endpoint, options);
+    //   const data = await response.json();
+    //   // dummy data
+    //   setPrompts(prompts.filter((prompt: Prompt) => prompt.promptId !== id));
+    // } catch (error) {
+    //   console.log("ERROR", error);
+    // }
+  };
 
   return (
     <>
@@ -77,7 +126,7 @@ export default function PromptComponent({ prompt }: Props) {
             <div className="absolute right-1 z-10 flex text-gray-300">
               <button
                 onClick={(event: MouseEvent<HTMLButtonElement>) =>
-                  editPromptName(event, prompt.id)
+                  editPromptName(event, prompt.promptId)
                 }
                 type="submit"
                 className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
@@ -85,7 +134,7 @@ export default function PromptComponent({ prompt }: Props) {
                 <CheckIcon />
               </button>
               <button
-                onClick={() => setOpenEditTitle(!openEditTitle)}
+                onClick={() => setOpenEditTitle(false)}
                 className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
               >
                 <ClearIcon />
@@ -108,13 +157,13 @@ export default function PromptComponent({ prompt }: Props) {
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
-                    onClick={() => deletePrompt(prompt.id)}
+                    onClick={() => deletePrompt(prompt.promptId)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <CheckIcon />
                   </button>
                   <button
-                    onClick={() => setDeletePromptConfirm(!deletePromptConfirm)}
+                    onClick={() => setDeletePromptConfirm(false)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <ClearIcon />
@@ -125,13 +174,13 @@ export default function PromptComponent({ prompt }: Props) {
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
-                    onClick={() => setOpenEditTitle(!openEditTitle)}
+                    onClick={() => setOpenEditTitle(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <EditIcon />
                   </button>
                   <button
-                    onClick={() => setDeletePromptConfirm(!deletePromptConfirm)}
+                    onClick={() => setDeletePromptConfirm(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <DeleteIcon />

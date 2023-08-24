@@ -1,9 +1,11 @@
+"use client";
+
 import { useEffect } from "react";
 import Link from "next/link";
 
 import { useGlobalContext } from "@/services/context/GlobalContext";
-
 import Chat from "@/interfaces/chat.interface";
+import ChatTab from "@/interfaces/chatTab.interface";
 
 import AssistantIcon from "@mui/icons-material/Assistant";
 import CloseIcon from "@mui/icons-material/Close";
@@ -24,8 +26,8 @@ export default function ConversationsTab({ id, chat }: Props) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!chatTabs.find((chatTab) => chatTab.id === chat?.id))
-      dispatch(setChatTabs([...chatTabs, { id: chat!.id, title: chat!.title }]));
+    if (!chatTabs.find((chatTab) => chatTab.id === chat?.chatId))
+      dispatch(setChatTabs([...chatTabs, { id: chat!.chatId, title: chat!.title }]));
   }, [id ]);
   console.log(chatTabs)
 
@@ -37,14 +39,14 @@ export default function ConversationsTab({ id, chat }: Props) {
       dispatch(setChatTabs(currentState));
 
       // const chatTabs = useSelector((state)=> state.app) // Get updated chatTabs from the state
-      if (chat.id === id) {
+      if (chat.chatId === id) {
         if (chatTabs.length === 1) {
           router.push("/chats");
         } else {
-          router.push(chatTabs[chatTabs.length - 1].id);
+          router.push(chatTabs[chatTabs.length - 2].id);
         }
       }
-    });
+    })
   };
 
   return (

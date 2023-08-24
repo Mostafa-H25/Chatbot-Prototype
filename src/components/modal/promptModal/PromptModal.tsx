@@ -1,20 +1,19 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useState } from "react";
-
 import { useGlobalContext } from "@/services/context/GlobalContext";
-
+import { useModalContext } from "@/services/context/ModalContext";
 import Prompt from "@/interfaces/prompt.interface";
-
-import Modal from "../Modal";
 
 interface Props {
   prompt: Prompt;
 }
 
 export default function PromptModal({ prompt }: Props) {
-  const { prompts, setPrompts, setIsPromptModalOpen } = useGlobalContext();
-  const [updatedPrompt, setUpdatedPrompt] = useState(prompt);
+  const { prompts, setPrompts } = useGlobalContext();
+  const { setIsPromptModalOpen } = useModalContext();
+
+  const [updatedPrompt, setUpdatedPrompt] = useState<Prompt>(prompt);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -22,20 +21,47 @@ export default function PromptModal({ prompt }: Props) {
     setUpdatedPrompt({ ...updatedPrompt, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setUpdatedPrompt({
       ...prompt,
       [e.currentTarget.name]: e.currentTarget.value,
     });
-
+    // try {
+    //   const prompt: Prompt = updatedPrompt;
+    //   const id: string = prompt.promptId;
+    //   const endpoint = `/api/folder/${id}`;
+    //   const options = {
+    //     method: "PUT",
+    //     header: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ prompt }),
+    //   };
+    //   const response = await fetch(endpoint, options);
+    //   const data = await response.json();
+    //   // dummy data
+    //   const updPrompt = {
+    //     ...prompt,
+    //     [e.currentTarget.name]: e.currentTarget.value,
+    //   };
+    //   setPrompts(
+    //     prompts.map((prompt: Prompt) => {
+    //       if (prompt.promptId === id) {
+    //         prompt = updatedPrompt;
+    //         return prompt;
+    //       }
+    //       return prompt;
+    //     })
+    //   );
+    // } catch (error) {
+    //   console.log("ERROR", error);
+    // }
     let updatedPrompts = [...prompts];
     updatedPrompts = updatedPrompts.map((prompt: Prompt) => {
-      if (prompt.id === updatedPrompt.id) return updatedPrompt;
+      if (prompt.promptId === updatedPrompt.promptId) return updatedPrompt;
       return prompt;
     });
-
-    setPrompts(updatedPrompts);
     setIsPromptModalOpen(false);
   };
 

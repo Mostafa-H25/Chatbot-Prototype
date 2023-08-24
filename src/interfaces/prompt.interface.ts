@@ -1,8 +1,10 @@
 export default interface Prompt {
-  id: string;
+  promptId: string;
+  userId: string;
+  folderId: string | undefined;
   title: string;
   description: string;
   prompt: string;
-  user: User;
   createdAt: Date;
+  isDeleted: boolean;
 }

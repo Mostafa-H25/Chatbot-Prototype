@@ -1,11 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
-import { useGlobalContext } from "@/services/context/GlobalContext";
-import { useRef, useState, MouseEvent, useEffect } from "react";
-import KeyIcon from "@mui/icons-material/Key";
+import { useModalContext } from "@/services/context/ModalContext";
 
 import TypewritterComponent from "typewriter-effect";
 import AuthenticationModal from "../modal/authenticationModal/AuthenticationModal";
@@ -19,7 +17,6 @@ const LandingHero = () => {
   type AuthenticationType = "Sign In" | "Register";
   const [authenticationType, setAuthenticationType] =
     useState<AuthenticationType>("Sign In");
-  const ref = useRef<HTMLDivElement>(null);
 
   const openAuthenticationModal = (type: AuthenticationType) => {
     setAuthenticationType(type);
@@ -71,9 +68,7 @@ const LandingHero = () => {
       </div>
       <div>
         {isAuthenticationModalOpen && (
-          <div
-            className="fixed inset-0 top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-50"
-          >
+          <div className="fixed inset-0 top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-50">
             <AuthenticationModal
               authenticationType={authenticationType}
               closeModal={closeAuthenticationModal}

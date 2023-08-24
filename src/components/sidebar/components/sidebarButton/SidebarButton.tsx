@@ -25,7 +25,6 @@ export default function SidebarButton({ side, state, toggleState }: Props) {
             className={`py-4 ${theme === "dark" ? "text-white" : "text-black"}`}
           >
             {/* check if sidebar is opened or closed */}
-
             {state ? (
               <KeyboardDoubleArrowLeftIcon />
             ) : (

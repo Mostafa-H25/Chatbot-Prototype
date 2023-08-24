@@ -1,9 +1,5 @@
-"use client";
-
-import { ReactNode, useState } from "react";
-
 import { useGlobalContext } from "@/services/context/GlobalContext";
-
+import { useSidebarContext } from "@/services/context/SidebarContext";
 import Chat from "@/interfaces/chat.interface";
 import Folder from "@/interfaces/folder.interface";
 
@@ -20,6 +16,9 @@ export default function FoldersChatsComponent() {
   const { chats } = useSelector((state) => state.app);
   const dispatch = useDispatch();
   const { search, filteredChats,folders } = useSelector((state) => state.slide);
+
+  // const { chats } = useGlobalContext();
+  // const { search, filteredChats, folders, setFolders } = useSidebarContext();
 
   const handleDrop = (folderId: string, chatId: string) => {
     const updatedFolders = folders.map((folder) => {
@@ -53,11 +52,8 @@ export default function FoldersChatsComponent() {
           <div className="flex border-b border-white/20 pb-2">
             <div className="flex flex-col w-full pt-2">
               {folders.map((folder: Folder) => (
-                <div key={folder.id}>
-                  <FolderComponent
-                    folder={folder}
-                    onDrop={handleDrop}
-                  />
+                <div key={folder.folderId}>
+                  <FolderComponent folder={folder} onDrop={handleDrop} />
                 </div>
               ))}
             </div>
@@ -71,7 +67,7 @@ export default function FoldersChatsComponent() {
                   {filteredChats.length > 0 ? (
                     <>
                       {filteredChats.map((chat: Chat) => (
-                        <div key={chat.id}>
+                        <div key={chat.chatId}>
                           <ChatComponent chat={chat} />
                         </div>
                       ))}
@@ -85,10 +81,8 @@ export default function FoldersChatsComponent() {
               ) : (
                 <>
                   {availableChats.map((chat: Chat) => (
-                    <div key={chat.id}>
-                      <ChatComponent
-                        chat={chat}
-                      />
+                    <div key={chat.chatId}>
+                      <ChatComponent chat={chat} />
                     </div>
                   ))}
                 </>

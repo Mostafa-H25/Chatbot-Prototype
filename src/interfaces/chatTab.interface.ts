@@ -1,4 +1,4 @@
-export interface ChatTab {
+export default interface ChatTab {
   id: string;
   title: string;
 }

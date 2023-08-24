@@ -2,9 +2,8 @@
 
 import { ChangeEvent, MouseEvent, useState } from "react";
 import Link from "next/link";
-
 import { useGlobalContext } from "@/services/context/GlobalContext";
-
+import { useSidebarContext } from "@/services/context/SidebarContext";
 import Chat from "@/interfaces/chat.interface";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -56,12 +55,67 @@ export default function ChatComponent({ chat }: Props) {
       dispatch(setChats(updatedChats));
     }
 
-    setOpenEditTitle(false);
-  }
+  // const editChatName = async (e: MouseEvent<HTMLButtonElement>, id: string) => {
+  //   e.preventDefault();
+  //   // try {
+  //   //   const chat: Chat = chats.find((chat: Chat) => chat.chatId === id)!;
+  //   //   if (chat) chat.title = e.currentTarget.value;
+  //   //   const endpoint = `/api/chat/${id}`;
+  //   //   const options = {
+  //   //     method: "PUT",
+  //   //     header: {
+  //   //       "Content-Type": "application/json",
+  //   //     },
+  //   //     body: JSON.stringify({ chat }),
+  //   //   };
+  //   //   const response = await fetch(endpoint, options);
+  //   //   const data = await response.json();
+  //   //   // dummy data
+  //   //   const updatedChat: Chat = {
+  //   //     ...chat,
+  //   //     [e.currentTarget.name]: e.currentTarget.value,
+  //   //   };
+  //   //   setChats(
+  //   //     chats.map((chat: Chat) => {
+  //   //       if (chat.chatId === id) {
+  //   //         chat = updatedChat;
+  //   //         return chat;
+  //   //       }
+  //   //       return chat;
+  //   //     })
+  //   //   );
+  //   // } catch (error) {
+  //   //   console.log("ERROR", error);
+  //   // }
+  //   setChats(
+  //     chats.map((chat: Chat) => {
+  //       if (chat.chatId === id) {
+  //         chat.title = title;
+  //         return chat;
+  //       }
+  //       return chat;
+  //     })
+  //   );
+  //   setOpenEditTitle(false);
+  // };
 
-
-  function deleteChat(id: string) {
+  const deleteChat = async (id: string) => {
     dispatch(setChats(chats.filter((chat: Chat) => chat.id !== id)));
+    // try {
+    //   const endpoint = `/api/chat/${id}`;
+    //   const options = {
+    //     method: "DELETE",
+    //     header: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   };
+    //   const response = await fetch(endpoint, options);
+    //   const data = await response.json();
+    //   // dummy data
+    //   setChats(chats.filter((chat: Chat) => chat.chatId !== id));
+    // } catch (error) {
+    //   console.log("ERROR", error);
+    // }
 
     const updatedFolders = folders.map((folder) => ({
       ...folder,
@@ -71,7 +125,7 @@ export default function ChatComponent({ chat }: Props) {
   }
 
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
-    event.dataTransfer.setData("text/plain", chat.id);
+    event.dataTransfer.setData("text/plain", chat.chatId);
   };
 
   return (
@@ -104,7 +158,7 @@ export default function ChatComponent({ chat }: Props) {
             <div className="absolute right-1 z-10 flex text-gray-300">
               <button
                 onClick={(event: MouseEvent<HTMLButtonElement>) =>
-                  editChatName(event, chat.id)
+                  editChatName(event, chat.chatId)
                 }
                 type="submit"
                 className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
@@ -112,7 +166,7 @@ export default function ChatComponent({ chat }: Props) {
                 <CheckIcon />
               </button>
               <button
-                onClick={() => setOpenEditTitle(!openEditTitle)}
+                onClick={() => setOpenEditTitle(false)}
                 className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
               >
                 <ClearIcon />
@@ -122,7 +176,7 @@ export default function ChatComponent({ chat }: Props) {
         ) : (
           <>
             <Link
-              href={`/chats/${chat.id}`}
+              href={`/chats/${chat.chatId}`}
               className="flex items-center gap-3 w-full rounded-lg bg-[#343541]/90 p-3 cursor-pointer text-sm transition-colors duration-200 hover:bg-[#343541]/90"
             >
               <ChatIcon />
@@ -135,15 +189,13 @@ export default function ChatComponent({ chat }: Props) {
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
-                    onClick={() => {
-                      deleteChat(chat.id);
-                    }}
+                    onClick={() => deleteChat(chat.chatId)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <CheckIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteChatConfirm(!deleteChatConfirm)}
+                    onClick={() => setDeleteChatConfirm(false)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <ClearIcon />
@@ -154,13 +206,13 @@ export default function ChatComponent({ chat }: Props) {
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
-                    onClick={() => setOpenEditTitle(!openEditTitle)}
+                    onClick={() => setOpenEditTitle(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <EditIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteChatConfirm(!deleteChatConfirm)}
+                    onClick={() => setDeleteChatConfirm(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <DeleteIcon />

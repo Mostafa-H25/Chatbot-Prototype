@@ -1,4 +1,3 @@
-import GlobalContext from "@/services/context/GlobalContext";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Provider } from 'react-redux'
@@ -17,8 +16,11 @@ export default function RootLayout({
   return (
     <html lang="en">
     <body>
-      <WrapRedux>{children}</WrapRedux>
-    </body>
-  </html>
+      <WrapRedux>
+        <div id="modal-root"></div>
+        {children}
+      </WrapRedux>
+      </body>
+    </html>
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { useGlobalContext } from "@/services/context/GlobalContext";
 import { useRef, MouseEvent } from "react";
 import ReactDOM from "react-dom";
+import { useModalContext } from "@/services/context/ModalContext";
 import SettingsModal from "./settingsModal/SettingsModal";
 import PromptModal from "./promptModal/PromptModal";
 
@@ -14,7 +14,7 @@ export default function Modal() {
     setIsSettingsModalOpen,
     isPromptModalOpen,
     setIsPromptModalOpen,
-  } = useGlobalContext();
+  } = useModalContext();
 
   const ref = useRef<HTMLDivElement>(null);
 

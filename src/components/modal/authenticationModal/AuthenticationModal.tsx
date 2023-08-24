@@ -1,11 +1,14 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useRef, useState, } from "react";
-
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { useGlobalContext } from "@/services/context/GlobalContext";
+<<<<<<< HEAD
 import {setUser ,setIsAuthenticationModalOpen } from '@/services/redux/reducers/appSlice'
 import { useSelector , useDispatch } from "react-redux";
 import { DummyUser } from "@/dummyData/dummyUser";
+=======
+import { useModalContext } from "@/services/context/ModalContext";
+>>>>>>> 123241c196717f0f5c54cde8bb74e9e7f6b479ee
 
 import GoogleIcon from "@mui/icons-material/Google";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -26,23 +29,35 @@ export default function AuthenticationModal({
   closeModal,
   setAuthenticationType,
 }: Props) {
+<<<<<<< HEAD
   //const { setUser, setIsAuthenticationModalOpen } =useGlobalContext();
   const dispatch = useDispatch()
+=======
+  const { setUser } = useGlobalContext();
+  const { setIsAuthenticationModalOpen } = useModalContext();
+>>>>>>> 123241c196717f0f5c54cde8bb74e9e7f6b479ee
 
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
-  const [authenticatingUser, setAuthenticatingUser] = useState({
+  const [authenticatingUser, setAuthenticatingUser] = useState<Partial<User>>({
     email: "",
     password: "",
   });
-  const [registeringUser, setRegisteringUser] = useState({
+
+  const [registeringUser, setRegisteringUser] = useState<{
+    email: string;
+    password: string;
+    confirmPassword: string;
+    username: string;
+    userRole: string;
+  }>({
     email: "",
     password: "",
-    repeatPassword: "",
+    confirmPassword: "",
     username: "",
-    userCategory: "",
+    userRole: "BASIC",
   });
 
   const goBack = () => {
@@ -62,7 +77,9 @@ export default function AuthenticationModal({
       });
     }
   };
-  const logIn = (e: FormEvent<HTMLFormElement>) => {
+
+  const logIn = async (e: FormEvent<HTMLFormElement>) => {
+    // mn awel 82 l3'ayt 99 da el adeem b3d kda el gaded
     setAuthenticatingUser({
       ...authenticatingUser,
       [e.currentTarget.name]: e.currentTarget.value,
@@ -88,7 +105,34 @@ export default function AuthenticationModal({
     }
     // wrong password
     else if (false) {
+    try {
+      const user = authenticatingUser;
+      setIsLoading(true);
+      // send user to backend
+      const endpoint = "/api/authentication/login";
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user }),
+      };
+      // receive token from backend
+      const response = await fetch(endpoint, options);
+      const data = response.json();
+      // user authenticated
+      if (response.ok) {
+        setIsLoading(false);
+        setAuthenticatingUser({
+          email: "",
+          password: "",
+        });
+        setIsAuthenticationModalOpen(false);
+      }
+    } catch (error) {
       // toast
+      setIsLoading(false);
+      console.log("ERROR", error);
     }
   };
 
@@ -98,16 +142,26 @@ export default function AuthenticationModal({
       [e.currentTarget.name]: e.currentTarget.value,
     });
     try {
+      const user = registeringUser;
       // send user to backend
-      const response = await fetch("/api/authentication", {
+      const endpoint = "/api/authentication/register";
+      const options = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ registeringUser }),
-      });
+        body: JSON.stringify({ user }),
+      };
+      const response = await fetch(endpoint, options);
+      const data = await response.json();
       // toast check email for verification
-      e.currentTarget.reset();
+      setRegisteringUser({
+        email: "",
+        password: "",
+        confirmPassword: "",
+        username: "",
+        userRole: "BASIC",
+      });
       setAuthenticationType("Sign In");
     } catch (error) {
       // toast
@@ -222,12 +276,12 @@ export default function AuthenticationModal({
           {/* Register Inputs */}
           {authenticationType === "Register" && (
             <>
-              <label className="p-2 text-sm font-bold ">Repeat Password</label>
+              <label className="p-2 text-sm font-bold ">confirm Password</label>
               <input
                 className="mt-2 mb-4 mx-2 w-full border border-neutral-800 rounded-lg bg-[#40414F] px-4 py-2 shadow text-neutral-100 focus:outline-none"
                 type="password"
-                id="repeatPassword"
-                {...register('repeatPassword' ,  {
+                id="confirmPassword"
+                {...register('confirmPassword' ,  {
                   required: {
                     value : true ,
                     message :'Please write your password again'},
@@ -238,14 +292,14 @@ export default function AuthenticationModal({
                     }
                   }
                 )}
-                value={registeringUser.repeatPassword}
+                value={registeringUser.confirmPassword}
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>{
                   handleChange(event)
-                  clearErrors("repeatPassword");
+                  clearErrors("confirmPassword");
                 }
                 }
               />
-              <p className="p-2 mb-1 text-rose-900 rounded">{errors.repeatPassword?.message}</p>
+              <p className="p-2 mb-1 text-rose-900 rounded">{errors.confirmPassword?.message}</p>
               <label className="p-2 text-sm font-bold ">Username</label>
               <input
                 className="mt-2 mb-4 mx-2 w-full border border-neutral-800 rounded-lg bg-[#40414F] px-4 py-2 shadow text-neutral-100 focus:outline-none"
@@ -272,8 +326,8 @@ export default function AuthenticationModal({
                     <input
                       className=""
                       type="radio"
-                      id="basicUserCategory"
-                      {...register('userCategory' , {
+                      id="basicUserRole"
+                      {...register('userRole' , {
                         required: {
                           value : true ,
                           message :'Please Choose a type!'},
@@ -282,7 +336,7 @@ export default function AuthenticationModal({
                       value="BASIC"
                     />
                     <label
-                      htmlFor="basicUserCategory"
+                      htmlFor="basicUserRole"
                       className="p-2 text-sm font-bold "
                     >
                       Basic
@@ -292,8 +346,8 @@ export default function AuthenticationModal({
                     <input
                       className=""
                       type="radio"
-                      id="premiumUserCategory"
-                      {...register('userCategory' ,  {
+                      id="premiumUserRole"
+                      {...register('userRole' ,  {
                         required: {
                           value : true ,
                           message :'Please Choose a type'},
@@ -302,13 +356,13 @@ export default function AuthenticationModal({
                       value="PREMIUM"
                     />
                     <label
-                      htmlFor="premiumUserCategory"
+                      htmlFor="premiumUserRole"
                       className="p-2 text-sm font-bold "
                     >
                       Premium
                     </label>
                   </div>
-                   <p className="p-2 mb-1 text-rose-900 rounded">{errors.userCategory?.message}</p>
+                   <p className="p-2 mb-1 text-rose-900 rounded">{errors.userRole?.message}</p>
                 </div>
               </div>
             </>

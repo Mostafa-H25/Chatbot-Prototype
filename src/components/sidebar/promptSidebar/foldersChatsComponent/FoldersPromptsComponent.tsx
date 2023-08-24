@@ -1,6 +1,5 @@
 import { useGlobalContext } from "@/services/context/GlobalContext";
 import { useSidebarContext } from "@/services/context/SidebarContext";
-
 import Folder from "@/interfaces/folder.interface";
 import Prompt from "@/interfaces/prompt.interface";
 
@@ -8,10 +7,9 @@ import FolderComponent from "./folderComponent/FolderComponent";
 import PromptComponent from "./PromptComponent/PromptComponent";
 import NoData from "../../components/noData/NoData";
 
-
 export default function FoldersPromptsComponent() {
   const { prompts } = useGlobalContext();
-  const { search, filteredPrompts,folders,setFolders } = useSidebarContext();
+  const { search, filteredPrompts, folders, setFolders } = useSidebarContext();
 
   return (
     <div className="flex-grow overflow-auto">
@@ -21,10 +19,8 @@ export default function FoldersPromptsComponent() {
           <div className="flex border-b border-white/20 pb-2">
             <div className="flex flex-col w-full pt-2">
               {folders.map((folder: Folder) => (
-                <div key={folder.id}>
-                  <FolderComponent
-                    folder={folder}
-                  />
+                <div key={folder.folderId}>
+                  <FolderComponent folder={folder} />
                 </div>
               ))}
             </div>
@@ -38,7 +34,7 @@ export default function FoldersPromptsComponent() {
                   {filteredPrompts.length > 0 ? (
                     <>
                       {filteredPrompts.map((prompt: Prompt) => (
-                        <div key={prompt.id}>
+                        <div key={prompt.promptId}>
                           <PromptComponent prompt={prompt} />
                         </div>
                       ))}
@@ -52,7 +48,7 @@ export default function FoldersPromptsComponent() {
               ) : (
                 <>
                   {prompts.map((prompt: Prompt) => (
-                    <div key={prompt.id}>
+                    <div key={prompt.promptId}>
                       <PromptComponent prompt={prompt} />
                     </div>
                   ))}
