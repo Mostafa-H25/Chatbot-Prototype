@@ -1,4 +1,4 @@
-import LandingHero from "@/app/components/login/landing-hero";
+import LandingHero from "@/components/login/landing-hero";
 
 const LandingPage = () => {
   return (

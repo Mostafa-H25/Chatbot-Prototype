@@ -1,10 +1,10 @@
 "use client";
 
-import { useGlobalContext } from "@/app/services/context/GlobalContext";
+import { useGlobalContext } from "@/services/context/GlobalContext";
 
-import Conversation from "@/app/components/conversation/Conversation";
-import ConversationsTab from "@/app/components/conversationsTab/ConversationsTab";
-import Chat from "@/app/interfaces/chat.interface";
+import Conversation from "@/components/conversation/Conversation";
+import ConversationsTab from "@/components/conversationsTab/ConversationsTab";
+import Chat from "@/interfaces/chat.interface";
 
 export default function ConversationPage({
   params,

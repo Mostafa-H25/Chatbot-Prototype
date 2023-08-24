@@ -1,8 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import GlobalContext from "@/app/services/context/GlobalContext";
-import ModalContext from "./services/context/ModalContext";
+import GlobalContext from "@/services/context/GlobalContext";
+import ModalContext from "@/services/context/ModalContext";
 
 const inter = Inter({ subsets: ["latin"] });
 

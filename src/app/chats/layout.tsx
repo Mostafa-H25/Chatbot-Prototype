@@ -1,7 +1,5 @@
-
-
-import ChatSidebar from "@/app/components/sidebar/chatSidebar/ChatSidebar";
-import PromptSideBar from "@/app/components/sidebar/promptSidebar/PromptSidebar";
+import ChatSidebar from "@/components/sidebar/chatSidebar/ChatSidebar";
+import PromptSideBar from "@/components/sidebar/promptSidebar/PromptSidebar";
 
 export default function MainLayout({
   children,
