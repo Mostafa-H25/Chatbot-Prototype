@@ -58,7 +58,7 @@ export default function Modal() {
 
   if (isModalOpen) {
     return ReactDOM.createPortal(
-      modalContent,
+      modalContent!,
       document.getElementById("modal-root")!
     );
   }

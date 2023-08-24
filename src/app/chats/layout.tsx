@@ -8,8 +8,7 @@ export default function MainLayout({
 }) {
   return (
     <main className='flex h-screen w-screen flex-col text-sm text-white dark:text-white dark'>
-      <div id='modal-root'></div>
-      <div className='flex h-full w-full pt-[48px] sm:pt-0'>
+      <div className='flex h-full w-full sm:pt-0'>
         <ChatSidebar />
         {children}
         <PromptSideBar />
