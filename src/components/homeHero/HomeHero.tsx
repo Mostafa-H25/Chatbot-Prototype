@@ -1,7 +1,8 @@
 "use client";
+
 import { useGlobalContext } from "@/services/context/GlobalContext";
 
-export default function MainComponent() {
+export default function HomeHero() {
   const { theme } = useGlobalContext();
   return (
     <main className="flex flex-1 text-black">
@@ -12,12 +13,20 @@ export default function MainComponent() {
       >
         <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
           {/* Welcome */}
-          <div className={`text-center text-4xl font-bold ${theme === "dark" ? "text-white" : "text-black"}`}>
+          <div
+            className={`text-center text-4xl font-bold ${
+              theme === "dark" ? "text-white" : "text-black"
+            }`}
+          >
             Welcome to Chatbot UI
           </div>
 
           {/* Sub-title */}
-          <div className={`text-center text-lg ${theme === "dark" ? "text-white" : "text-black/50"}`}>
+          <div
+            className={`text-center text-lg ${
+              theme === "dark" ? "text-white" : "text-black/50"
+            }`}
+          >
             <div className="mb-8 hidden">
               {/* eslint-disable-next-line react/no-unescaped-entities */}
               Chatbot UI is an open source clone of OpenAI's ChatGPT UI.

@@ -1,25 +1,37 @@
-"use client";
-
 import Link from "next/link";
-
 import { useGlobalContext } from "@/services/context/GlobalContext";
+import { useModalContext } from "@/services/context/ModalContext";
+import { useSidebarContext } from "@/services/context/SidebarContext";
 
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+
 export default function ChatSidebarFooter() {
-  const {
-    user,
-    setUser,
-    chats,
-    setChats,
-    isSettingsModalOpen,
-    setIsSettingsModalOpen,
-    isAuthenticationModalOpen,
-    setIsAuthenticationModalOpen,
-  } = useGlobalContext();
+  const { user, chats, setChats } = useGlobalContext();
+  const { setIsSettingsModalOpen } = useModalContext();
+
+  const handleLogout = async () => {
+    try {
+      const userId = user?.userId;
+      const endpoint = "/api/logout";
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }),
+      };
+      const response = await fetch(endpoint, options);
+      const data = await response.json();
+      // toast
+      console.log("you are logged out");
+    } catch (error) {
+      console.log("ERROR", error);
+    }
+  };
 
   const handleDeleteClick = () => {
     Swal.fire({
@@ -39,21 +51,12 @@ export default function ChatSidebarFooter() {
     });
   };
 
-  const router = useRouter();
-
-  const handleLogout = () => {
-    // Perform logout actions if needed
-    setUser({ ...user, isAuthenticated: false });
-    // Redirect to login page while replacing the current route
-    router.replace("/");
-  };
-
   return (
     <div className="flex flex-col items-center space-y-1 border-t border-white/20 pt-1 text-sm">
       {chats.length > 0 && (
         <>
           <button
-            onClick={handleDeleteClick}
+            onClick={() => handleDeleteClick()}
             className="flex w-full cursor-pointer select-none items-center gap-3 rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
           >
             <FileUploadIcon />
@@ -96,18 +99,15 @@ export default function ChatSidebarFooter() {
         <SettingsIcon />
         <span>Settings</span>
       </button>
-      {/* user.isAuthenticated */}
-      {user?.isAuthenticated === true && (
-        <>
-          <button
-            onClick={handleLogout}
-            className="flex w-full cursor-pointer select-none items-center gap-3 rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
-          >
-            <SettingsIcon />
-            <span>Logout</span>
-          </button>
-        </>
-      )}
+
+      {/* user.logout */}
+      <button
+        onClick={() => handleLogout()}
+        className="flex w-full cursor-pointer select-none items-center gap-3 rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
+      >
+        <SettingsIcon />
+        <span>Logout</span>
+      </button>
     </div>
   );
 }

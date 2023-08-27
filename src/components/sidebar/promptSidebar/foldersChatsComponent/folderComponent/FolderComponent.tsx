@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-
+import { ChangeEvent, MouseEvent, useState } from "react";
+import { useSidebarContext } from "@/services/context/SidebarContext";
 import Folder from "@/interfaces/folder.interface";
 
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
@@ -9,7 +9,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useSidebarContext } from "@/services/context/SidebarContext";
 
 interface Props {
   folder: Folder;
@@ -21,15 +20,56 @@ export default function FolderComponent({ folder }: Props) {
   const [deleteFolderConfirm, setDeleteFolderConfirm] = useState(false);
   const { folders, setFolders } = useSidebarContext();
 
-  function handleChange(e: any, id: number) {
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setTitle(e.target.value);
   }
 
-  function editFolderName(e: any, id: number) {
+  const editFolderName = async (
+    e: MouseEvent<HTMLButtonElement>,
+    id: string
+  ) => {
     e.preventDefault();
+    // try {
+    //   const folder: Folder | undefined = folders.find(
+    //     (folder: Folder) => folder.folderId === id
+    //   );
+    //   if (folder) folder.title = e.currentTarget.value;
+    //   const endpoint = `/api/folder/${id}`;
+    //   const options = {
+    //     method: "PUT",
+    //     header: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ folder }),
+    //   };
+    //   const response = await fetch(endpoint, options);
+    //   const data = await response.json();
+
+    //   // dummy data
+    //   const updatedFolder: Folder = {
+    //     folderId: id,
+    //     userId: "1",
+    //     title: e.currentTarget.value,
+    //     type: "PROMPT",
+    //     createdAt: new Date(),
+    //     isDeleted: false,
+    //   };
+    //   setFolders(
+    //     folders.map((folder: Folder) => {
+    //       if (folder.folderId === id) {
+    //         folder = updatedFolder;
+    //         return folder;
+    //       }
+    //       return folder;
+    //     })
+    //   );
+    // } catch (error) {
+    //   console.log("ERROR", error);
+    // }
+
     setFolders(
       folders.map((folder: Folder) => {
-        if (folder.id === String(id)) {
+        if (folder.folderId === String(id)) {
           folder.title = title;
           return folder;
         }
@@ -37,11 +77,29 @@ export default function FolderComponent({ folder }: Props) {
       })
     );
     setEditTitle(false);
-  }
+  };
 
-  function deleteFolder(id: number) {
-    setFolders(folders.filter((folder: Folder) => folder.id !== String(id)));
-  }
+  const deleteFolder = async (id: string) => {
+    setFolders(
+      folders.filter((folder: Folder) => folder.folderId !== String(id))
+    );
+    // try {
+    //   const endpoint = `/api/folder/${id}`;
+    //   const options = {
+    //     method: "DELETE",
+    //     header: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   };
+    //   const response = await fetch(endpoint, options);
+    //   const data = await response.json();
+
+    //   // dummy data
+    //   setFolders(folders.filter((folder: Folder) => folder.folderId !== id));
+    // } catch (error) {
+    //   console.log("ERROR", error);
+    // }
+  };
 
   return (
     <>
@@ -55,7 +113,9 @@ export default function FolderComponent({ folder }: Props) {
                 id="title"
                 name="title"
                 value={title}
-                onChange={() => handleChange(event, folder.id)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  handleChange(event)
+                }
                 autoFocus
                 className="mr-12 flex-1 overflow-hidden overflow-ellipsis border-neutral-400 bg-transparent text-left text-[12.5px] leading-3 text-white outline-none focus:border-neutral-100"
               />
@@ -63,14 +123,16 @@ export default function FolderComponent({ folder }: Props) {
 
             <div className="absolute right-1 z-10 flex text-gray-300">
               <button
-                onClick={() => editFolderName(event, folder.id)}
+                onClick={(event: MouseEvent<HTMLButtonElement>) =>
+                  editFolderName(event, folder.folderId)
+                }
                 type="submit"
                 className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
               >
                 <CheckIcon />
               </button>
               <button
-                onClick={() => setEditTitle(!editTitle)}
+                onClick={() => setEditTitle(false)}
                 className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
               >
                 <ClearIcon />
@@ -90,13 +152,13 @@ export default function FolderComponent({ folder }: Props) {
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
-                    onClick={() => deleteFolder(folder.id)}
+                    onClick={() => deleteFolder(folder.folderId)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <CheckIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteFolderConfirm(!deleteFolderConfirm)}
+                    onClick={() => setDeleteFolderConfirm(false)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <ClearIcon />
@@ -107,13 +169,13 @@ export default function FolderComponent({ folder }: Props) {
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
-                    onClick={() => setEditTitle(!editTitle)}
+                    onClick={() => setEditTitle(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <EditIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteFolderConfirm(!deleteFolderConfirm)}
+                    onClick={() => setDeleteFolderConfirm(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <DeleteIcon />

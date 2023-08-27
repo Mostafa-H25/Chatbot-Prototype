@@ -1,10 +1,8 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useRef, useState, } from "react";
-
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { useGlobalContext } from "@/services/context/GlobalContext";
-
-import { DummyUser } from "@/dummyData/dummyUser";
+import { useModalContext } from "@/services/context/ModalContext";
 
 import GoogleIcon from "@mui/icons-material/Google";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -23,23 +21,30 @@ export default function AuthenticationModal({
   closeModal,
   setAuthenticationType,
 }: Props) {
-  const { setUser, setIsAuthenticationModalOpen } =useGlobalContext();
-
+  const { setUser } = useGlobalContext();
+  const { setIsAuthenticationModalOpen } = useModalContext();
 
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
-  const [authenticatingUser, setAuthenticatingUser] = useState({
+  const [authenticatingUser, setAuthenticatingUser] = useState<Partial<User>>({
     email: "",
     password: "",
   });
-  const [registeringUser, setRegisteringUser] = useState({
+
+  const [registeringUser, setRegisteringUser] = useState<{
+    email: string;
+    password: string;
+    confirmPassword: string;
+    username: string;
+    userRole: string;
+  }>({
     email: "",
     password: "",
-    repeatPassword: "",
+    confirmPassword: "",
     username: "",
-    userCategory: "",
+    userRole: "BASIC",
   });
 
   const goBack = () => {
@@ -59,33 +64,40 @@ export default function AuthenticationModal({
       });
     }
   };
-  const logIn = (e: FormEvent<HTMLFormElement>) => {
+
+  const logIn = async (e: FormEvent<HTMLFormElement>) => {
     setAuthenticatingUser({
       ...authenticatingUser,
       [e.currentTarget.name]: e.currentTarget.value,
     });
-    setIsLoading(true);
-    // send user to backend
-    // receive authenticated user from backend
-    // user authenticated
-    setIsLoading(false);
-    if (true) {
-      DummyUser.isAuthenticated = true;
-      setUser(DummyUser);
-      e.currentTarget.reset();
-      setIsAuthenticationModalOpen(true);
-    }
-    // user is not verified
-    else if (false) {
+    try {
+      const user = authenticatingUser;
+      setIsLoading(true);
+      // send user to backend
+      const endpoint = "/api/authentication/login";
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user }),
+      };
+      // receive token from backend
+      const response = await fetch(endpoint, options);
+      const data = response.json();
+      // user authenticated
+      if (response.ok) {
+        setIsLoading(false);
+        setAuthenticatingUser({
+          email: "",
+          password: "",
+        });
+        setIsAuthenticationModalOpen(false);
+      }
+    } catch (error) {
       // toast
-    }
-    // wrong email
-    else if (false) {
-      // toast
-    }
-    // wrong password
-    else if (false) {
-      // toast
+      setIsLoading(false);
+      console.log("ERROR", error);
     }
   };
 
@@ -95,16 +107,26 @@ export default function AuthenticationModal({
       [e.currentTarget.name]: e.currentTarget.value,
     });
     try {
+      const user = registeringUser;
       // send user to backend
-      const response = await fetch("/api/authentication", {
+      const endpoint = "/api/authentication/register";
+      const options = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ registeringUser }),
-      });
+        body: JSON.stringify({ user }),
+      };
+      const response = await fetch(endpoint, options);
+      const data = await response.json();
       // toast check email for verification
-      e.currentTarget.reset();
+      setRegisteringUser({
+        email: "",
+        password: "",
+        confirmPassword: "",
+        username: "",
+        userRole: "BASIC",
+      });
       setAuthenticationType("Sign In");
     } catch (error) {
       // toast
@@ -130,7 +152,6 @@ export default function AuthenticationModal({
       register(e);
     }
   };
-
 
   return (
     <div className="bg-white dark:bg-[#202123] rounded-lg px-8 py-2 shadow-md max-w-md w-full text-black">
@@ -192,7 +213,7 @@ export default function AuthenticationModal({
                 type="password"
                 id="repeatPassword"
                 name="repeatPassword"
-                value={registeringUser.repeatPassword}
+                value={registeringUser.confirmPassword}
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   handleChange(event)
                 }
@@ -215,12 +236,12 @@ export default function AuthenticationModal({
                     <input
                       className=""
                       type="radio"
-                      id="basicUserCategory"
-                      name="userCategory"
+                      id="basicUserRole"
+                      name="userRole"
                       value="BASIC"
                     />
                     <label
-                      htmlFor="basicUserCategory"
+                      htmlFor="basicUserRole"
                       className="p-2 text-sm font-bold "
                     >
                       Basic
@@ -230,12 +251,12 @@ export default function AuthenticationModal({
                     <input
                       className=""
                       type="radio"
-                      id="premiumUserCategory"
-                      name="userCategory"
+                      id="premiumUserRole"
+                      name="userRole"
                       value="PREMIUM"
                     />
                     <label
-                      htmlFor="premiumUserCategory"
+                      htmlFor="premiumUserRole"
                       className="p-2 text-sm font-bold "
                     >
                       Premium

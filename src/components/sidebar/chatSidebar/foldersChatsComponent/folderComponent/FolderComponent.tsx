@@ -1,16 +1,14 @@
 "use client";
-
-import { useEffect, useRef, useState } from "react";
-
+import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
+import { useGlobalContext } from "@/services/context/GlobalContext";
+import { useSidebarContext } from "@/services/context/SidebarContext";
 import Folder from "@/interfaces/folder.interface";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useGlobalContext } from "@/services/context/GlobalContext";
 import ChatComponent from "../ChatComponent/ChatComponent";
-import { useSidebarContext } from "@/services/context/SidebarContext";
 import { BlockPicker, TwitterPicker } from "react-color";
 
 import { IconCaretDown, IconCaretRight } from "@tabler/icons-react";
@@ -37,7 +35,7 @@ export default function FolderComponent({ folder, onDrop }: Props) {
       if (
         showColorPicker &&
         colorPickerRef.current &&
-        !colorPickerRef.current.contains(event.target as Node)
+        colorPickerRef.current.contains(event.target as Node)
       ) {
         setShowColorPicker(false);
       }
@@ -56,16 +54,55 @@ export default function FolderComponent({ folder, onDrop }: Props) {
     }
   }, [folder]);
 
-  function handleChange(e: any) {
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setTitle(e.target.value);
   }
 
-  function editFolderName(e: any, id: string) {
-    // e.preventDefault();
+  const editFolderName = async (
+    e: MouseEvent<HTMLButtonElement>,
+    id: string
+  ) => {
+    e.preventDefault();
+    // try {
+    //   const folder: Folder | undefined = folders.find(
+    //     (folder: Folder) => folder.folderId === id
+    //   );
+    //   if (folder) folder.title = e.currentTarget.value;
+    //   const endpoint = `/api/folder/${id}`;
+    //   const options = {
+    //     method: "PUT",
+    //     header: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ folder }),
+    //   };
+    //   const response = await fetch(endpoint, options);
+    //   const data = await response.json();
 
+    //   // dummy data
+    //   const updatedFolder: Folder = {
+    //     folderId: id,
+    //     userId: "1",
+    //     title: e.currentTarget.value,
+    //     type: "PROMPT",
+    //     createdAt: new Date(),
+    //     isDeleted: false,
+    //   };
+    //   setFolders(
+    //     folders.map((folder: Folder) => {
+    //       if (folder.folderId === id) {
+    //         folder = updatedFolder;
+    //         return folder;
+    //       }
+    //       return folder;
+    //     })
+    //   );
+    // } catch (error) {
+    //   console.log("ERROR", error);
+    // }
     setFolders(
       folders.map((folder: Folder) => {
-        if (folder.id === id) {
+        if (folder.folderId === id) {
           folder.title = title;
           return folder;
         }
@@ -73,21 +110,41 @@ export default function FolderComponent({ folder, onDrop }: Props) {
       })
     );
     setEditTitle(false);
-  }
+  };
 
-  function deleteFolder(id: string) {
-    const updatedFolders = folders.filter((folder: Folder) => folder.id !== id);
+  const deleteFolder = async (id: string) => {
+    const updatedFolders = folders.filter(
+      (folder: Folder) => folder.folderId !== id
+    );
     setFolders(updatedFolders);
-
-    // Remove all chats inside the deleted folder
-    const chatsToRemove = folders.find((folder) => folder.id === id)?.chatIds;
+    const chatsToRemove = folders.find(
+      (folder) => folder.folderId === id
+    )?.chatIds;
     if (chatsToRemove) {
       const updatedChats = chats.filter(
-        (chat) => !chatsToRemove.includes(chat.id)
+        (chat) => !chatsToRemove.includes(chat.chatId)
       );
       setChats(updatedChats);
     }
-  }
+    // try {
+    //   const endpoint = `/api/folder/${id}`;
+    //   const options = {
+    //     method: "DELETE",
+    //     header: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   };
+    //   const response = await fetch(endpoint, options);
+    //   const data = await response.json();
+
+    //   // dummy data
+    //   setFolders(folders.filter((folder: Folder) => folder.folderId !== id));
+    // } catch (error) {
+    //   console.log("ERROR", error);
+    // }
+
+    // Remove all chats inside the deleted folder
+  };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -101,9 +158,9 @@ export default function FolderComponent({ folder, onDrop }: Props) {
         "Dropped chat with ID:",
         chatId,
         "into folder with ID:",
-        folder.id
+        folder.folderId
       );
-      onDrop(folder.id, chatId);
+      onDrop(folder.folderId, chatId);
     }
   };
 
@@ -114,7 +171,7 @@ export default function FolderComponent({ folder, onDrop }: Props) {
   const handleBackgroundColorChange = (color: string) => {
     setCurrentColor(color.hex);
     const updatedFolders = folders.map((f) =>
-      f.id === folder.id ? { ...f, backgroundColor: color.hex } : f
+      f.folderId === folder.folderId ? { ...f, backgroundColor: color.hex } : f
     );
     setFolders(updatedFolders);
   };
@@ -147,7 +204,9 @@ export default function FolderComponent({ folder, onDrop }: Props) {
                 id="title"
                 name="title"
                 value={title}
-                onChange={() => handleChange(event)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  handleChange(event)
+                }
                 autoFocus
                 className={`mr-12 flex-1 overflow-hidden overflow-ellipsis border-neutral-400 bg-transparent text-left text-[12.5px] leading-3 text-${textColorClass} outline-none focus:border-neutral-100`}
               />
@@ -155,14 +214,16 @@ export default function FolderComponent({ folder, onDrop }: Props) {
 
             <div className="absolute right-1 z-10 flex text-gray-300">
               <button
-                onClick={() => editFolderName(event, folder.id)}
+                onClick={(event: MouseEvent<HTMLButtonElement>) =>
+                  editFolderName(event, folder.folderId)
+                }
                 type="submit"
                 className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
               >
                 <CheckIcon />
               </button>
               <button
-                onClick={() => setEditTitle(!editTitle)}
+                onClick={() => setEditTitle(false)}
                 className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
               >
                 <ClearIcon />
@@ -195,13 +256,13 @@ export default function FolderComponent({ folder, onDrop }: Props) {
               <>
                 <div className="absolute right-1 z-10 flex text-gray-300">
                   <button
-                    onClick={() => deleteFolder(folder.id)}
-                    className="min-w-[20px] p-1 text-red-600 "
+                    onClick={() => deleteFolder(folder.folderId)}
+                    className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <CheckIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteFolderConfirm(!deleteFolderConfirm)}
+                    onClick={() => setDeleteFolderConfirm(false)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <ClearIcon />
@@ -231,13 +292,13 @@ export default function FolderComponent({ folder, onDrop }: Props) {
                     )}
                   </div>
                   <button
-                    onClick={() => setEditTitle(!editTitle)}
+                    onClick={() => setEditTitle(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <EditIcon />
                   </button>
                   <button
-                    onClick={() => setDeleteFolderConfirm(!deleteFolderConfirm)}
+                    onClick={() => setDeleteFolderConfirm(true)}
                     className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
                   >
                     <DeleteIcon />
@@ -251,7 +312,7 @@ export default function FolderComponent({ folder, onDrop }: Props) {
       {isChatListOpen && (
         <ul className="pl-3 border-l border-gray-300 mt-2">
           {folder.chatIds.map((chatId) => {
-            const chat = chats.find((c) => c.id === chatId);
+            const chat = chats.find((c) => c.chatId === chatId);
             return (
               <li key={chatId} className="mb-1 text-center">
                 {chat && <ChatComponent chat={chat} />}

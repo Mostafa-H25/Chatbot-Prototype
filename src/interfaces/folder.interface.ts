@@ -1,11 +1,9 @@
-import Chat from "./chat.interface";
-
 export default interface Folder {
-  id: string;
+  folderId: string;
+  userId: string;
   title: string;
-  items: Array<Chat>;
-  user: User;
+  type: string;
   createdAt: Date;
-  chatIds: string[];
   backgroundColor: string;
+  isDeleted: boolean;
 }

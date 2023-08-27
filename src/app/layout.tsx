@@ -1,6 +1,10 @@
-import GlobalContext from "@/services/context/GlobalContext";
 import "./globals.css";
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import GlobalContext from "@/services/context/GlobalContext";
+import ModalContext from "@/services/context/ModalContext";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "AI Platform",
@@ -15,7 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <GlobalContext>{children}</GlobalContext>
+        <GlobalContext>
+          <ModalContext>
+            <div id="modal-root"></div>
+            {children}
+          </ModalContext>
+        </GlobalContext>
       </body>
     </html>
   );

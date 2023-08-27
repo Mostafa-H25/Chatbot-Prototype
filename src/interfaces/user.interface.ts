@@ -1,13 +1,9 @@
 interface User {
-  id: string;
+  userId: string;
   username: string;
-  firstName?: string;
-  lastName?: string;
   email: string;
   password: string;
-  dateOfBirth?: Date;
-  userCategory: string;
+  userRole: string;
   createdAt: Date;
-  isVerified: boolean;
-  isAuthenticated: boolean;
+  isDeleted: boolean;
 }

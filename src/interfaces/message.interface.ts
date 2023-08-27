@@ -1,6 +1,9 @@
 export default interface Message {
-  id: string;
-  content: string;
-  user: User | undefined;
+  messageId: string;
+  chatId: string;
+  userId: string;
+  question: string;
+  answer: string;
   createdAt: Date;
+  isDeleted: boolean;
 }
