@@ -2,14 +2,22 @@ import { useGlobalContext } from "@/services/context/GlobalContext";
 import { useSidebarContext } from "@/services/context/SidebarContext";
 import Chat from "@/interfaces/chat.interface";
 import Folder from "@/interfaces/folder.interface";
-
 import FolderComponent from "./folderComponent/FolderComponent";
 import ChatComponent from "./ChatComponent/ChatComponent";
 import NoData from "../../components/noData/NoData";
+import {useSelector , useDispatch} from 'react-redux'
+import {setFolders} from '@/services/redux/reducers/slideBaReducer'
+
+
 
 export default function FoldersChatsComponent() {
-  const { chats } = useGlobalContext();
-  const { search, filteredChats, folders, setFolders } = useSidebarContext();
+  // const { chats } = useGlobalContext();
+  const { chats } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
+  const { search, filteredChats,folders } = useSelector((state) => state.slide);
+
+  // const { chats } = useGlobalContext();
+  // const { search, filteredChats, folders, setFolders } = useSidebarContext();
 
   const handleDrop = (folderId: string, chatId: string) => {
     const updatedFolders = folders.map((folder) => {
@@ -28,11 +36,11 @@ export default function FoldersChatsComponent() {
       return folder;
     });
 
-    setFolders(updatedFolders);
+    dispatch(setFolders(updatedFolders));
   };
 
   const availableChats = chats.filter((chat) => {
-    return folders.every((folder) => !folder.chatIds.includes(chat.id));
+    return folders.every((folder) => !folder.chatIds.includes(chat.chatId) );
   });
 
   return (
@@ -55,7 +63,7 @@ export default function FoldersChatsComponent() {
             <div className="flex flex-col gap-1 w-full">
               {search ? (
                 <>
-                  {filteredChats.length > 0 ? (
+                  { Array.isArray(filteredChats) && filteredChats.length > 0 ? (
                     <>
                       {filteredChats.map((chat: Chat) => (
                         <div key={chat.chatId}>

@@ -1,3 +1,4 @@
+import {User} from '@/interfaces/user.interface'
 export default interface Message {
   messageId: string;
   chatId: string;

@@ -6,23 +6,31 @@ import Folder from "@/interfaces/folder.interface";
 
 import AddIcon from "@mui/icons-material/Add";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
-
+import { setChats } from "@/services/redux/reducers/appSlice";
+import { useSelector , useDispatch } from "react-redux";
+import {setFolders} from '@/services/redux/reducers/slideBaReducer'
+import moment from "moment";
 export default function ChatSidebarHeader() {
-  const { chats, setChats } = useGlobalContext();
-  const { folders, setFolders } = useSidebarContext();
+
+  const {user, chats } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
+
+  const {folders } = useSelector((state) => state.slide);
 
   const addChat = async () => {
     let counter = chats.length + 1;
-    setChats([
+    dispatch(setChats([
       ...chats,
       {
         chatId: String(counter),
         title: `New Conversation ${counter}`,
         conversation: [],
         modifiedAt: new Date(),
-        createdAt: new Date(),
+        createdAt:new Date(),
+        userId: "1" ,
+        isDeleted : false,
       },
-    ]);
+    ]))
     // try {
     //   const chat: Partial<Chat> = {
     //     title: `New Conversation ${counter}`,
@@ -55,7 +63,7 @@ export default function ChatSidebarHeader() {
 
   const addFolder = async () => {
     let counter = folders.length + 1;
-    setFolders([
+    dispatch(setFolders([
       ...folders,
       {
         folderId: String(counter),
@@ -64,7 +72,7 @@ export default function ChatSidebarHeader() {
         createdAt: new Date(),
         chatIds: [],
       },
-    ]);
+    ]));
     // try {
     //   const folder: Partial<Folder> = {
     //     title: `New Folder ${counter}`,

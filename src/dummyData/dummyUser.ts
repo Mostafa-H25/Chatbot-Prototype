@@ -3,8 +3,6 @@ export const DummyUser: User = {
   username: "user",
   email: "user@gmail.com",
   password: "password",
-  userCategory: "BASIC",
+  userRole: "BASIC",
   createdAt: new Date("1/1/2023"),
-  isVerified: true,
-  isAuthenticated: true,
 };

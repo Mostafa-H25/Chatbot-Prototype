@@ -1,11 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import GlobalContext from "@/services/context/GlobalContext";
-import ModalContext from "@/services/context/ModalContext";
-
-const inter = Inter({ subsets: ["latin"] });
-
+import { Provider } from 'react-redux'
+import Store from "@/services/Store"
+import WrapRedux from "./WrapRedux";
 export const metadata: Metadata = {
   title: "AI Platform",
   description: "AI Platform",
@@ -18,13 +15,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <GlobalContext>
-          <ModalContext>
-            <div id="modal-root"></div>
-            {children}
-          </ModalContext>
-        </GlobalContext>
+    <body>
+      <WrapRedux>
+        <div id="modal-root"></div>
+        {children}
+      </WrapRedux>
       </body>
     </html>
   );

@@ -1,9 +1,10 @@
 "use client";
 
 import { useGlobalContext } from "@/services/context/GlobalContext";
-
+import { useSelector } from "react-redux";
 export default function HomeHero() {
-  const { theme } = useGlobalContext();
+  const { theme } = useSelector((state) => state.app);
+
   return (
     <main className="flex flex-1 text-black">
       <div

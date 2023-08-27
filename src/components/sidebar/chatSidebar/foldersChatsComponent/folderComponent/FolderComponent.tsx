@@ -10,7 +10,9 @@ import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import ChatComponent from "../ChatComponent/ChatComponent";
 import { BlockPicker, TwitterPicker } from "react-color";
-
+import { setChats } from "@/services/redux/reducers/appSlice";
+import { setFolders } from "@/services/redux/reducers/slideBaReducer";
+import { useSelector , useDispatch } from "react-redux";
 import { IconCaretDown, IconCaretRight } from "@tabler/icons-react";
 
 interface Props {
@@ -19,12 +21,18 @@ interface Props {
 }
 
 export default function FolderComponent({ folder, onDrop }: Props) {
-  const { chats, setChats } = useGlobalContext();
+  //const { chats, setChats } = useGlobalContext();
+  const { chats } = useSelector((state)=> state.app);
+ // const { folders, setFolders } = useSidebarContext();
+  const { folders } =  useSelector((state)=> state.slide);
+
+  const dispatch = useDispatch();
+
   const [title, setTitle] = useState("");
   const [editTitle, setEditTitle] = useState(false);
   const [deleteFolderConfirm, setDeleteFolderConfirm] = useState(false);
   const [isChatListOpen, setIsChatListOpen] = useState(false);
-  const { folders, setFolders } = useSidebarContext();
+
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [currentColor, setCurrentColor] = useState(folder.backgroundColor);
   const colorPickerRef = useRef(null);
@@ -78,7 +86,6 @@ export default function FolderComponent({ folder, onDrop }: Props) {
     //   };
     //   const response = await fetch(endpoint, options);
     //   const data = await response.json();
-
     //   // dummy data
     //   const updatedFolder: Folder = {
     //     folderId: id,
@@ -100,31 +107,32 @@ export default function FolderComponent({ folder, onDrop }: Props) {
     // } catch (error) {
     //   console.log("ERROR", error);
     // }
-    setFolders(
+
+    dispatch(setFolders(
       folders.map((folder: Folder) => {
         if (folder.folderId === id) {
-          folder.title = title;
-          return folder;
+          return {
+            ...folder, // Spread the existing properties of the folder
+            title: title, // Update the title property
+          };
         }
-        return folder;
-      })
-    );
-    setEditTitle(false);
+  })))
+
+  setEditTitle(false);
   };
 
-  const deleteFolder = async (id: string) => {
-    const updatedFolders = folders.filter(
-      (folder: Folder) => folder.folderId !== id
-    );
-    setFolders(updatedFolders);
-    const chatsToRemove = folders.find(
-      (folder) => folder.folderId === id
-    )?.chatIds;
+
+  async function deleteFolder (id: string) {
+    const updatedFolders = folders.filter((folder: Folder) => folder.folderId !== id);
+    dispatch(setFolders(updatedFolders));
+
+    // Remove all chats inside the deleted folder
+    const chatsToRemove = folders.find((folder) => folder.folderId === id)?.chatIds;
     if (chatsToRemove) {
       const updatedChats = chats.filter(
         (chat) => !chatsToRemove.includes(chat.chatId)
       );
-      setChats(updatedChats);
+      dispatch(setChats(updatedChats));
     }
     // try {
     //   const endpoint = `/api/folder/${id}`;
@@ -173,7 +181,7 @@ export default function FolderComponent({ folder, onDrop }: Props) {
     const updatedFolders = folders.map((f) =>
       f.folderId === folder.folderId ? { ...f, backgroundColor: color.hex } : f
     );
-    setFolders(updatedFolders);
+    dispatch(setFolders(updatedFolders));
   };
 
   function getBrightness(hexColor: string) {

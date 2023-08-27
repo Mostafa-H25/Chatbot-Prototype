@@ -8,30 +8,14 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-
+import { useSelector , useDispatch } from 'react-redux';
+import setIsSettingsModalOpen from "@/services/redux/reducers/appSlice"
+import { setUser , setChats } from '@/services/redux/reducers/appSlice'
 export default function ChatSidebarFooter() {
-  const { user, chats, setChats } = useGlobalContext();
-  const { setIsSettingsModalOpen } = useModalContext();
+  const { user , chats  } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
 
-  const handleLogout = async () => {
-    try {
-      const userId = user?.userId;
-      const endpoint = "/api/logout";
-      const options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId }),
-      };
-      const response = await fetch(endpoint, options);
-      const data = await response.json();
-      // toast
-      console.log("you are logged out");
-    } catch (error) {
-      console.log("ERROR", error);
-    }
-  };
+
 
   const handleDeleteClick = () => {
     Swal.fire({
@@ -44,11 +28,39 @@ export default function ChatSidebarFooter() {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        setChats([]);
+        dispatch(setChats([]));
         // Call the API or perform any other necessary action here
         Swal.fire("Deleted!", "Your item has been deleted.", "success");
       }
     });
+  };
+
+  const router = useRouter();
+
+  // const handleLogout = async () => {
+  //   try {
+  //     const userId = user?.userId;
+  //     const endpoint = "/api/logout";
+  //     const options = {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ userId }),
+  //     };
+  //     const response = await fetch(endpoint, options);
+  //     const data = await response.json();
+  //     // toast
+  //     console.log("you are logged out");
+  //   } catch (error) {
+  //     console.log("ERROR", error);
+  //   }
+  // };
+  const handleLogout = () => {
+    // Perform logout actions if needed
+    dispatch(setUser({ ...user, isAuthenticated: false }));
+    // Redirect to login page while replacing the current route
+    router.replace("/");
   };
 
   return (
@@ -93,7 +105,7 @@ export default function ChatSidebarFooter() {
         </Link>
       </button>
       <button
-        onClick={() => setIsSettingsModalOpen(true)}
+        onClick={() => dispatch(setIsSettingsModalOpen(true))}
         className="flex w-full cursor-pointer select-none items-center gap-3 rounded-md py-3 px-3 text-[14px] leading-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
       >
         <SettingsIcon />

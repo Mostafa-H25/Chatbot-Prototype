@@ -3,7 +3,9 @@
 import { ChangeEvent, FormEvent, KeyboardEvent, useRef, useState } from "react";
 import { useGlobalContext } from "@/services/context/GlobalContext";
 import Chat from "@/interfaces/chat.interface";
-
+import { setMessages} from '@/services/redux/reducers/appSlice';
+import { setChats} from '@/services/redux/reducers/appSlice';
+import { useSelector , useDispatch } from "react-redux";
 import SendIcon from "@mui/icons-material/Send";
 
 interface Props {
@@ -11,7 +13,8 @@ interface Props {
 }
 
 export default function MessageInput({ id }: Props) {
-  const { chats, setChats, messages, setMessages, theme } = useGlobalContext();
+  const { chats, messages, theme } = useSelector((state)=> state.app);
+  const dispatch = useDispatch();
   const [messageContent, setMessageContent] = useState<string>("");
   const textareaRef = useRef(null);
 
@@ -59,8 +62,8 @@ export default function MessageInput({ id }: Props) {
       const response = await fetch(endpoint, options);
       console.log(message);
       const data = await response.json();
-      setMessages({ ...messages, data });
-      setChats(
+      dispatch(setMessages({ ...messages, data }));
+      dispatch(setChats(
         chats.map((chat: Chat) => {
           if (chat.chatId === id) {
             chat.modifiedAt = new Date();
@@ -68,7 +71,7 @@ export default function MessageInput({ id }: Props) {
           }
           return chat;
         })
-      );
+      ));
       setMessageContent("");
     } catch (error) {
       console.log("ERROR", error);
