@@ -3,15 +3,14 @@
 import { ChangeEvent, MouseEvent, useState } from "react";
 import Link from "next/link";
 import { useGlobalContext } from "@/services/context/GlobalContext";
-import { useSidebarContext } from "@/services/context/SidebarContext";
-import Chat from "@/interfaces/chat.interface";
 
+import Chat from "@/interfaces/chat.interface";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import ChatIcon from "@mui/icons-material/Chat";
-import { useSidebarContext } from "@/services/context/SidebarContext";
+
 import { setChats } from "@/services/redux/reducers/appSlice";
 import { useDispatch , useSelector } from "react-redux";
 import {setFolders} from '@/services/redux/reducers/slideBaReducer'
@@ -23,8 +22,6 @@ export default function ChatComponent({ chat }: Props) {
 
   const { chats } = useSelector((state) => state.app);
   const dispatch = useDispatch();
-  // const { chats, setChats } = useGlobalContext();
-
 
   const { folders } = useSelector((state) => state.slide);
   const [title, setTitle] = useState("");
@@ -35,12 +32,11 @@ export default function ChatComponent({ chat }: Props) {
     setTitle(e.target.value);
   }
 
-  function editChatName(e: MouseEvent<HTMLButtonElement>, id: string) {
+  function editChatName(e: MouseEvent<HTMLButtonElement>, id: string ) {
     // Find the chat to be edited
-    const chatToEdit = chats.find((chat) => chat.id === id);
+    const chatToEdit = chats.find((chat) => chat.chatId  === id);
 
     if (chatToEdit) {
-      // Create a new chat object with the updated title
       const updatedChat = {
         ...chatToEdit,
         title: title, // Replace title with the new title
@@ -48,12 +44,14 @@ export default function ChatComponent({ chat }: Props) {
 
       // Create a new array of chats with the updated chat
       const updatedChats = chats.map((chat) =>
-        chat.id === id ? updatedChat : chat
+        chat.chatId === id ? updatedChat : chat
       );
 
       // Dispatch the action to update the chats
       dispatch(setChats(updatedChats));
     }
+    setOpenEditTitle(false);
+  }
 
   // const editChatName = async (e: MouseEvent<HTMLButtonElement>, id: string) => {
   //   e.preventDefault();
@@ -99,8 +97,9 @@ export default function ChatComponent({ chat }: Props) {
   //   setOpenEditTitle(false);
   // };
 
+
   const deleteChat = async (id: string) => {
-    dispatch(setChats(chats.filter((chat: Chat) => chat.id !== id)));
+    dispatch(setChats(chats.filter((chat: Chat) => chat.chatId !== id)));
     // try {
     //   const endpoint = `/api/chat/${id}`;
     //   const options = {

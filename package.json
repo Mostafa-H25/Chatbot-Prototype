@@ -35,6 +35,7 @@
     "react-redux": "^8.1.2",
     "sweetalert2": "^11.7.23",
     "tailwindcss": "3.3.3",
+    "tr46": "^4.1.1",
     "typescript": "5.1.6",
     "typewriter-effect": "^2.20.1"
   }

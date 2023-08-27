@@ -2,13 +2,11 @@
 
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { useGlobalContext } from "@/services/context/GlobalContext";
-<<<<<<< HEAD
-import {setUser ,setIsAuthenticationModalOpen } from '@/services/redux/reducers/appSlice'
+import {setUser   } from '@/services/redux/reducers/appSlice'
+import  setIsAuthenticationModalOpen  from '@/services/redux/reducers/appSlice'
 import { useSelector , useDispatch } from "react-redux";
 import { DummyUser } from "@/dummyData/dummyUser";
-=======
 import { useModalContext } from "@/services/context/ModalContext";
->>>>>>> 123241c196717f0f5c54cde8bb74e9e7f6b479ee
 
 import GoogleIcon from "@mui/icons-material/Google";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -29,13 +27,10 @@ export default function AuthenticationModal({
   closeModal,
   setAuthenticationType,
 }: Props) {
-<<<<<<< HEAD
   //const { setUser, setIsAuthenticationModalOpen } =useGlobalContext();
   const dispatch = useDispatch()
-=======
-  const { setUser } = useGlobalContext();
-  const { setIsAuthenticationModalOpen } = useModalContext();
->>>>>>> 123241c196717f0f5c54cde8bb74e9e7f6b479ee
+  // const { setUser } = useGlobalContext();
+  // const { setIsAuthenticationModalOpen } = useModalContext();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -80,61 +75,62 @@ export default function AuthenticationModal({
 
   const logIn = async (e: FormEvent<HTMLFormElement>) => {
     // mn awel 82 l3'ayt 99 da el adeem b3d kda el gaded
-    setAuthenticatingUser({
-      ...authenticatingUser,
-      [e.currentTarget.name]: e.currentTarget.value,
-    });
-    setIsLoading(true);
-    // send user to backend
-    // receive authenticated user from backend
-    // user authenticated
-    setIsLoading(false);
-    if (true) {
-      DummyUser.isAuthenticated = true;
-      dispatch(setUser(DummyUser));
-      e.currentTarget.reset();
-      dispatch(setIsAuthenticationModalOpen(true));
-    }
-    // user is not verified
-    else if (false) {
-      // toast
-    }
-    // wrong email
-    else if (false) {
-      // toast
-    }
-    // wrong password
-    else if (false) {
-    try {
-      const user = authenticatingUser;
-      setIsLoading(true);
-      // send user to backend
-      const endpoint = "/api/authentication/login";
-      const options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user }),
-      };
-      // receive token from backend
-      const response = await fetch(endpoint, options);
-      const data = response.json();
-      // user authenticated
-      if (response.ok) {
-        setIsLoading(false);
-        setAuthenticatingUser({
-          email: "",
-          password: "",
-        });
-        setIsAuthenticationModalOpen(false);
-      }
-    } catch (error) {
-      // toast
-      setIsLoading(false);
-      console.log("ERROR", error);
-    }
-  };
+  //   setAuthenticatingUser({
+  //     ...authenticatingUser,
+  //     [e.currentTarget.name]: e.currentTarget.value,
+  //   });
+  //   setIsLoading(true);
+  //   // send user to backend
+  //   // receive authenticated user from backend
+  //   // user authenticated
+  //   setIsLoading(false);
+  //   if (true) {
+  //     DummyUser.isAuthenticated = true;
+  //     dispatch(setUser(DummyUser));
+  //     e.currentTarget.reset();
+  //     dispatch(setIsAuthenticationModalOpen(true));
+  //   }
+  //   // user is not verified
+  //   else if (false) {
+  //     // toast
+  //   }
+  //   // wrong email
+  //   else if (false) {
+  //     // toast
+  //   }
+  //   // wrong password
+  //   else if (false) {
+  //   try {
+  //     const user = authenticatingUser;
+  //     setIsLoading(true);
+  //     // send user to backend
+  //     const endpoint = "/api/authentication/login";
+  //     const options = {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ user }),
+  //     };
+  //     // receive token from backend
+  //     const response = await fetch(endpoint, options);
+  //     const data = response.json();
+  //     // user authenticated
+  //     if (response.ok) {
+  //       setIsLoading(false);
+  //       setAuthenticatingUser({
+  //         email: "",
+  //         password: "",
+  //       });
+  //       setIsAuthenticationModalOpen(false);
+  //     }
+  //   } catch (error) {
+  //     // toast
+  //     setIsLoading(false);
+  //     console.log("ERROR", error);
+  //   }
+  // };
+}
 
   const registers = async (e: FormEvent<HTMLFormElement>) => {
     setRegisteringUser({

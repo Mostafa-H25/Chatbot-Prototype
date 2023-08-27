@@ -2,11 +2,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import AppThunk from "@/services/Store"
 
 import { DummyUser } from '@/dummyData/dummyUser';
-import { ChatTab } from '@/interfaces/chatTab.interface';
+import  ChatTab  from '@/interfaces/chatTab.interface';
 import  Chat  from '@/interfaces/chat.interface';
 import  Message  from '@/interfaces/message.interface';
 import Prompt from "@/interfaces/prompt.interface"
-import {User} from '@/interfaces/user.interface'
+import User from '@/interfaces/user.interface'
 
 interface AppState {
   user: User | undefined;

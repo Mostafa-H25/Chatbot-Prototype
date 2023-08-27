@@ -27,6 +27,8 @@ export default function ChatSidebarHeader() {
         conversation: [],
         modifiedAt: new Date(),
         createdAt:new Date(),
+        userId: "1" ,
+        isDeleted : false,
       },
     ]))
     // try {

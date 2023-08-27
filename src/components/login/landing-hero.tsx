@@ -7,7 +7,8 @@ import { useModalContext } from "@/services/context/ModalContext";
 
 import TypewritterComponent from "typewriter-effect";
 import AuthenticationModal from "../modal/authenticationModal/AuthenticationModal";
-import { setIsAuthenticationModalOpen } from "@/services/redux/reducers/appSlice";
+import  {setIsAuthenticationModalOpen}  from "@/services/redux/reducers/appSlice";
+
 import { useSelector , useDispatch } from "react-redux";
 
 const LandingHero = () => {
