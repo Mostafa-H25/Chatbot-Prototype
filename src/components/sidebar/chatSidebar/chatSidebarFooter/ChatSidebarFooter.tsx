@@ -9,8 +9,8 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { useSelector , useDispatch } from 'react-redux';
-import setIsSettingsModalOpen from "@/services/redux/reducers/appSlice"
-import { setUser , setChats } from '@/services/redux/reducers/appSlice'
+
+import { setUser , setChats , setIsSettingsModalOpen } from '@/services/redux/reducers/appSlice'
 export default function ChatSidebarFooter() {
   const { user , chats  } = useSelector((state) => state.app);
   const dispatch = useDispatch();
