@@ -1,16 +1,16 @@
-import { useGlobalContext } from "@/services/context/GlobalContext";
+import { useGlobalContext } from '@/services/context/GlobalContext';
 
-import Folder from "@/interfaces/folder.interface";
-import Prompt from "@/interfaces/prompt.interface";
+import Folder from '@/interfaces/folder.interface';
+import Prompt from '@/interfaces/prompt.interface';
 
-import AddIcon from "@mui/icons-material/Add";
-import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
-import { useSidebarContext } from "@/services/context/SidebarContext";
-
-
+import AddIcon from '@mui/icons-material/Add';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import { useSidebarContext } from '@/services/context/SidebarContext';
+import { useSession } from 'next-auth/react';
 
 export default function PromptSidebarHeader() {
-    const {  folders, setFolders } = useSidebarContext();
+  const { folders, setFolders } = useSidebarContext();
+  const { data: session } = useSession();
 
   const { user, prompts, setPrompts } = useGlobalContext();
 
@@ -21,8 +21,8 @@ export default function PromptSidebarHeader() {
       {
         id: String(counter),
         title: `New Prompt ${counter}`,
-        description: "",
-        prompt: "",
+        description: '',
+        prompt: '',
         user: user,
         createdAt: new Date(),
       },
@@ -39,25 +39,24 @@ export default function PromptSidebarHeader() {
         items: [],
         createdAt: new Date(),
         chatIds: [],
+        backgroundColor: '',
       },
     ]);
   }
 
   return (
-    <div className="flex items-center">
+    <div className='flex items-center'>
       <button
         onClick={() => addMainComponent()}
-        disabled={user?.isAuthenticated === false}
-        className="flex flex-shrink-0 items-center gap-3 w-[190px] rounded-md border border-white/20 bg-transparent p-3 cursor-pointer select-none text-white transition-colors duration-200 hover:bg-gray-500/10"
-      >
+        disabled={session?.user.accessToken === 'undefined'}
+        className='flex flex-shrink-0 items-center gap-3 w-[190px] rounded-md border border-white/20 bg-transparent p-3 cursor-pointer select-none text-white transition-colors duration-200 hover:bg-gray-500/10'>
         <AddIcon />
         New Prompt
       </button>
       <button
         onClick={() => addNewFolder()}
-        disabled={user?.isAuthenticated === false}
-        className="flex flex-shrink-0 items-center gap-3 ml-2 rounded-md border border-white/20 bg-transparent p-3 cursor-pointer text-sm text-white transition-colors duration-200 hover:bg-gray-500/10"
-      >
+        disabled={session?.user.accessToken === 'undefined'}
+        className='flex flex-shrink-0 items-center gap-3 ml-2 rounded-md border border-white/20 bg-transparent p-3 cursor-pointer text-sm text-white transition-colors duration-200 hover:bg-gray-500/10'>
         <CreateNewFolderIcon />
       </button>
     </div>

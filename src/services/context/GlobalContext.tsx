@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   ReactNode,
@@ -6,12 +6,13 @@ import {
   useContext,
   useEffect,
   useState,
-} from "react";
-import Chat from "@/interfaces/chat.interface";
-import Prompt from "@/interfaces/prompt.interface";
-import { DummyUser } from "@/dummyData/dummyUser";
-import { ChatTab } from "@/interfaces/chatTab.interface";
-import PromptModal from "@/interfaces/promptModal.interface";
+} from 'react';
+import Chat from '@/interfaces/chat.interface';
+import Prompt from '@/interfaces/prompt.interface';
+import { ChatTab } from '@/interfaces/chatTab.interface';
+import PromptModal from '@/interfaces/promptModal.interface';
+import Message from '@/interfaces/message.interface';
+import { DummyUser } from '@/dummyData/dummyUser';
 
 interface StateContext {
   user: User | undefined;
@@ -32,6 +33,13 @@ interface StateContext {
   setChatTabs: any;
   theme: string;
   toggleTheme: any;
+
+  messages: Message[];
+  isMessageUpading: boolean;
+  addMessages: (message: Message) => void;
+  removeMessage: (id: string) => void;
+  updateMessage: (id: string, updateFn: (prevText: string) => string) => void;
+  setIsMessageUpdating: (isUpdating: boolean) => void;
 }
 
 const initialState = {
@@ -51,8 +59,15 @@ const initialState = {
   setIsModalOpen: (isModalOpen: boolean) => {},
   chatTabs: [],
   setChatTabs: (chatTabs: ChatTab[]) => {},
-  theme: "",
+  theme: '',
   toggleTheme: () => {},
+
+  messages: [],
+  isMessageUpading: false,
+  addMessages: () => {},
+  removeMessage: () => {},
+  updateMessage: () => {},
+  setIsMessageUpdating: () => {},
 };
 
 const AppContext = createContext<StateContext>(initialState);
@@ -64,11 +79,14 @@ interface Props {
 }
 
 export default function GlobalContext({ children }: Props) {
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState('dark');
   const [user, setUser] = useState<User | undefined>(DummyUser);
   const [chats, setChats] = useState<Chat[]>([]);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [chatTabs, setChatTabs] = useState<ChatTab[]>([]);
+
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isMessageUpading, setIsMessageUpdating] = useState<boolean>(false);
 
   const [isSettingsModalOpen, setIsSettingsModalOpen] =
     useState<boolean>(false);
@@ -81,7 +99,29 @@ export default function GlobalContext({ children }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
+    setTheme((prevTheme) => (prevTheme === 'dark' ? 'light' : 'dark'));
+  };
+
+  const addMessages = (message: Message) => {
+    setMessages((prev) => [...prev, message]);
+  };
+
+  const removeMessage = (id: string) => {
+    setMessages((prev) => prev.filter((message) => message.messageId != id));
+  };
+
+  const updateMessage = (
+    id: string,
+    updateFn: (prevText: string) => string
+  ) => {
+    setMessages((prev) =>
+      prev.map((message) => {
+        if (message.messageId === id) {
+          return { ...message, text: updateFn(message.text) };
+        }
+        return message;
+      })
+    );
   };
 
   useEffect(() => {
@@ -122,8 +162,14 @@ export default function GlobalContext({ children }: Props) {
         setChatTabs,
         theme,
         toggleTheme,
-      }}
-    >
+        messages,
+        addMessages,
+        removeMessage,
+        updateMessage,
+        isMessageUpading,
+        setIsMessageUpdating,
+        
+      }}>
       {children}
     </AppContext.Provider>
   );

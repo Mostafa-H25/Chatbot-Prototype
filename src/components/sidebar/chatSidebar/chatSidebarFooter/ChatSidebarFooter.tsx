@@ -36,7 +36,7 @@ export default function ChatSidebarFooter() {
   const router = useRouter();
 
   const handleLogout = async () => {
-    setUser({ ...user, isAuthenticated: false });
+    setUser({ ...user });
     const endpoint = '/api/logout';
     const options = {
       method: 'DELETE',
@@ -52,6 +52,8 @@ export default function ChatSidebarFooter() {
     });
     router.replace('/');
   };
+
+  console.log('SEESION OF THE USER', session?.user.accessToken);
 
   return (
     <div className='flex flex-col items-center space-y-1 border-t border-white/20 pt-1 text-sm'>
@@ -97,7 +99,7 @@ export default function ChatSidebarFooter() {
         <SettingsIcon />
         <span>Settings</span>
       </button>
-      {/* user.isAuthenticated */}
+      {/* user session */}
       {session && (
         <>
           <button

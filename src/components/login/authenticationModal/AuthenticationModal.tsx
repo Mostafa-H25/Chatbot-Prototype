@@ -8,7 +8,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 import { useRouter } from 'next/navigation';
 
-import { signIn, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { ToastContainer, toast } from 'react-toastify';
 
 interface Props {
@@ -24,7 +24,7 @@ export default function AuthenticationModal({
   closeModal,
   setAuthenticationType,
 }: Props) {
-  const { data: session } = useSession();
+
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -71,10 +71,9 @@ export default function AuthenticationModal({
       if (result?.ok) {
         toast.success('Sign in Successful');
         setIsAuthenticationModalOpen(false);
-        console.log('Session', session?.user.accessToken);
         setTimeout(() => {
           router.push('/chats');
-        }, 2000);
+        }, 1000);
       }
     } catch (error) {
       toast.error('Error Notification !');
@@ -155,6 +154,7 @@ export default function AuthenticationModal({
                 : registeringUser.email
             }
             onChange={handleChange}
+            required
           />
           <label className='p-2 text-sm font-bold '>Password</label>
           <input
@@ -168,6 +168,7 @@ export default function AuthenticationModal({
                 : registeringUser.password
             }
             onChange={handleChange}
+            required
           />
 
           {/* Register Inputs */}
@@ -181,6 +182,7 @@ export default function AuthenticationModal({
                 name='confirmPassword'
                 value={registeringUser.confirmPassword}
                 onChange={handleChange}
+                required
               />
               <label className='p-2 text-sm font-bold '>Username</label>
               <input
@@ -190,6 +192,7 @@ export default function AuthenticationModal({
                 name='username'
                 value={registeringUser.username}
                 onChange={handleChange}
+                required
               />
             </>
           )}

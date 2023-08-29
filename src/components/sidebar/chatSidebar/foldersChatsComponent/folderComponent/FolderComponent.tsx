@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
-import Folder from "@/interfaces/folder.interface";
+import Folder from '@/interfaces/folder.interface';
 
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
-import { useGlobalContext } from "@/services/context/GlobalContext";
-import ChatComponent from "../ChatComponent/ChatComponent";
-import { useSidebarContext } from "@/services/context/SidebarContext";
-import { BlockPicker, TwitterPicker } from "react-color";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
+import ClearIcon from '@mui/icons-material/Clear';
+import { useGlobalContext } from '@/services/context/GlobalContext';
+import ChatComponent from '../ChatComponent/ChatComponent';
+import { useSidebarContext } from '@/services/context/SidebarContext';
+import { BlockPicker, TwitterPicker } from 'react-color';
 
-import { IconCaretDown, IconCaretRight } from "@tabler/icons-react";
+import { IconCaretDown, IconCaretRight } from '@tabler/icons-react';
 
 interface Props {
   folder: Folder;
@@ -22,7 +22,7 @@ interface Props {
 
 export default function FolderComponent({ folder, onDrop }: Props) {
   const { chats, setChats } = useGlobalContext();
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState('');
   const [editTitle, setEditTitle] = useState(false);
   const [deleteFolderConfirm, setDeleteFolderConfirm] = useState(false);
   const [isChatListOpen, setIsChatListOpen] = useState(false);
@@ -30,7 +30,7 @@ export default function FolderComponent({ folder, onDrop }: Props) {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [currentColor, setCurrentColor] = useState(folder.backgroundColor);
   const colorPickerRef = useRef(null);
-  const [textColorClass, setTextColorClass] = useState("white");
+  const [textColorClass, setTextColorClass] = useState('white');
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,15 +43,15 @@ export default function FolderComponent({ folder, onDrop }: Props) {
       }
     };
 
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
     };
   }, [showColorPicker]);
   useEffect(() => {
     if (folder && folder.backgroundColor) {
       const brightness = getBrightness(folder.backgroundColor);
-      const newTextColorClass = brightness < 128 ? "white" : "black";
+      const newTextColorClass = brightness < 128 ? 'white' : 'black';
       setTextColorClass(newTextColorClass);
     }
   }, [folder]);
@@ -83,7 +83,7 @@ export default function FolderComponent({ folder, onDrop }: Props) {
     const chatsToRemove = folders.find((folder) => folder.id === id)?.chatIds;
     if (chatsToRemove) {
       const updatedChats = chats.filter(
-        (chat) => !chatsToRemove.includes(chat.id)
+        (chat) => !chatsToRemove.includes(chat.chatId)
       );
       setChats(updatedChats);
     }
@@ -95,12 +95,12 @@ export default function FolderComponent({ folder, onDrop }: Props) {
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    const chatId = event.dataTransfer.getData("text/plain");
+    const chatId = event.dataTransfer.getData('text/plain');
     if (!folder.chatIds.includes(chatId)) {
       console.log(
-        "Dropped chat with ID:",
+        'Dropped chat with ID:',
         chatId,
-        "into folder with ID:",
+        'into folder with ID:',
         folder.id
       );
       onDrop(folder.id, chatId);
@@ -129,23 +129,21 @@ export default function FolderComponent({ folder, onDrop }: Props) {
   return (
     <>
       <div
-        className="relative flex items-center"
+        className='relative flex items-center'
         onDragOver={handleDragOver}
-        onDrop={handleDrop}
-      >
+        onDrop={handleDrop}>
         {editTitle ? (
           <>
             <button
-              className="flex w-full cursor-pointer  items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#343541]/90 border border-gray-500"
+              className='flex w-full cursor-pointer  items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#343541]/90 border border-gray-500'
               style={{
                 backgroundColor: folder.backgroundColor,
-              }}
-            >
+              }}>
               <IconCaretRight size={18} color={textColorClass} />
               <input
-                type="text"
-                id="title"
-                name="title"
+                type='text'
+                id='title'
+                name='title'
                 value={title}
                 onChange={() => handleChange(event)}
                 autoFocus
@@ -153,18 +151,16 @@ export default function FolderComponent({ folder, onDrop }: Props) {
               />
             </button>
 
-            <div className="absolute right-1 z-10 flex text-gray-300">
+            <div className='absolute right-1 z-10 flex text-gray-300'>
               <button
                 onClick={() => editFolderName(event, folder.id)}
-                type="submit"
-                className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
-              >
+                type='submit'
+                className='min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100'>
                 <CheckIcon />
               </button>
               <button
                 onClick={() => setEditTitle(!editTitle)}
-                className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
-              >
+                className='min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100'>
                 <ClearIcon />
               </button>
             </div>
@@ -172,12 +168,11 @@ export default function FolderComponent({ folder, onDrop }: Props) {
         ) : (
           <>
             <button
-              className="flex w-full cursor-pointer my-2 items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#343541]/90 border border-gray-500"
+              className='flex w-full cursor-pointer my-2 items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#343541]/90 border border-gray-500'
               onClick={toggleChatList}
               style={{
                 backgroundColor: folder.backgroundColor,
-              }}
-            >
+              }}>
               {isChatListOpen ? (
                 <IconCaretDown size={18} color={textColorClass} />
               ) : (
@@ -185,44 +180,41 @@ export default function FolderComponent({ folder, onDrop }: Props) {
               )}
 
               <div
-                className={`relative max-h-5 flex-1 overflow-hidden text-red whitespace-nowrap break-all text-left text-[12.5px] leading-3 text-${textColorClass}`}
-              >
+                className={`relative max-h-5 flex-1 overflow-hidden text-red whitespace-nowrap break-all text-left text-[12.5px] leading-3 text-${textColorClass}`}>
                 {folder.title}
               </div>
             </button>
 
             {deleteFolderConfirm ? (
               <>
-                <div className="absolute right-1 z-10 flex text-gray-300">
+                <div className='absolute right-1 z-10 flex text-gray-300'>
                   <button
                     onClick={() => deleteFolder(folder.id)}
-                    className="min-w-[20px] p-1 text-red-600 "
-                  >
+                    className='min-w-[20px] p-1 text-red-600 '>
                     <CheckIcon />
                   </button>
                   <button
                     onClick={() => setDeleteFolderConfirm(!deleteFolderConfirm)}
-                    className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
-                  >
+                    className='min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100'>
                     <ClearIcon />
                   </button>
                 </div>
               </>
             ) : (
               <>
-                <div className="absolute right-1  flex text-gray-300">
+                <div className='absolute right-1  flex text-gray-300'>
                   <div>
-                    <div className="relative">
+                    <div className='relative'>
                       <button
                         className={`bg-${textColorClass} font-bold p-3 rounded-full transition`}
-                        onClick={() => setShowColorPicker(!showColorPicker)}
-                      ></button>
+                        onClick={() =>
+                          setShowColorPicker(!showColorPicker)
+                        }></button>
                     </div>
                     {showColorPicker && (
                       <div
-                        className="absolute -right-1 top-9 z-50"
-                        ref={colorPickerRef}
-                      >
+                        className='absolute -right-1 top-9 z-50'
+                        ref={colorPickerRef}>
                         <BlockPicker
                           onChange={handleBackgroundColorChange}
                           color={currentColor}
@@ -232,14 +224,12 @@ export default function FolderComponent({ folder, onDrop }: Props) {
                   </div>
                   <button
                     onClick={() => setEditTitle(!editTitle)}
-                    className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
-                  >
+                    className='min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100'>
                     <EditIcon />
                   </button>
                   <button
                     onClick={() => setDeleteFolderConfirm(!deleteFolderConfirm)}
-                    className="min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100"
-                  >
+                    className='min-w-[20px] p-1 text-neutral-400 hover:text-neutral-100'>
                     <DeleteIcon />
                   </button>
                 </div>
@@ -249,11 +239,11 @@ export default function FolderComponent({ folder, onDrop }: Props) {
         )}
       </div>
       {isChatListOpen && (
-        <ul className="pl-3 border-l border-gray-300 mt-2">
+        <ul className='pl-3 border-l border-gray-300 mt-2'>
           {folder.chatIds.map((chatId) => {
-            const chat = chats.find((c) => c.id === chatId);
+            const chat = chats.find((c) => c.chatId === chatId);
             return (
-              <li key={chatId} className="mb-1 text-center">
+              <li key={chatId} className='mb-1 text-center'>
                 {chat && <ChatComponent chat={chat} />}
               </li>
             );

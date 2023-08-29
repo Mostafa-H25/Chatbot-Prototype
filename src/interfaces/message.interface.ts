@@ -1,6 +1,10 @@
 export default interface Message {
-  id: string;
-  content: string;
-  user: User | undefined;
-  createdAt: Date;
+  messageId: string;
+  text: string;
+  isUserMessage: boolean;
+  chatId?: string;
+  userId?: string;
+  answer?: string;
+  createdAt?: Date;
+  isDeleted?: boolean;
 }

@@ -1,5 +1,5 @@
 interface User {
-  id: string;
+  userId: string;
   username: string;
   firstName?: string;
   lastName?: string;
@@ -8,6 +8,4 @@ interface User {
   dateOfBirth?: Date;
   userCategory: string;
   createdAt: Date;
-  isVerified: boolean;
-  isAuthenticated: boolean;
 }

@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 
 import CredentialsProvider from 'next-auth/providers/credentials';
 
+
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
@@ -48,6 +49,7 @@ const handler = NextAuth({
   ],
   session: {
     strategy: 'jwt',
+    maxAge: 0.166667 * 60 * 60,
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -61,6 +63,17 @@ const handler = NextAuth({
   pages: {
     signIn: '/',
   },
+  // cookies: {
+  //   callbackUrl: {
+  //     name: 'accessToken',
+  //     options: {
+  //       path: '/',
+  //       secure: true,
+  //       httpOnly: true,
+  //       sameSite: 'lax',
+  //     },
+  //   },
+  // },
 });
 
 export { handler as GET, handler as POST };

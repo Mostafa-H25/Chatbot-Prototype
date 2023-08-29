@@ -1,10 +1,10 @@
-"use client";
-import { usePathname } from "next/navigation";
+'use client';
+import { usePathname } from 'next/navigation';
 
-import { useGlobalContext } from "@/services/context/GlobalContext";
+import { useGlobalContext } from '@/services/context/GlobalContext';
 
-import Conversation from "@/components/conversation/Conversation";
-import ConversationsTab from "@/components/conversationsTab/ConversationsTab";
+import Conversation from '@/components/conversation/Conversation';
+import ConversationsTab from '@/components/conversationsTab/ConversationsTab';
 
 export default function ConversationPage({
   params,
@@ -12,16 +12,16 @@ export default function ConversationPage({
   params: { conversationId: string };
 }) {
   const { chats, theme } = useGlobalContext();
+  console.log(params.conversationId);
 
-  const chat = chats.find((chat) => chat.id === params.conversationId);
+  const chat = chats.find((chat) => chat.chatId === params.conversationId);
 
   return (
-    <main className="flex flex-1">
+    <main className='flex flex-1'>
       <div
         className={`relative flex flex-col flex-1 overflow-hidden ${
-          theme === "dark" ? " bg-[#343541]" : "bg-white"
-        }`}
-      >
+          theme === 'dark' ? ' bg-[#343541]' : 'bg-white'
+        }`}>
         <ConversationsTab id={params.conversationId} chat={chat!} />
         <Conversation id={params.conversationId} />
       </div>

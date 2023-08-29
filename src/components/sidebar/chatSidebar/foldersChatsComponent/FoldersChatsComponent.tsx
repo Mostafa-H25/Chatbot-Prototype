@@ -39,7 +39,7 @@ export default function FoldersChatsComponent() {
   };
 
   const availableChats = chats.filter((chat) => {
-    return folders.every((folder) => !folder.chatIds.includes(chat.id));
+    return folders.every((folder) => !folder.chatIds.includes(chat.chatId));
   });
 
   return (
@@ -68,7 +68,7 @@ export default function FoldersChatsComponent() {
                   {filteredChats.length > 0 ? (
                     <>
                       {filteredChats.map((chat: Chat) => (
-                        <div key={chat.id}>
+                        <div key={chat.chatId}>
                           <ChatComponent chat={chat} />
                         </div>
                       ))}
@@ -82,7 +82,7 @@ export default function FoldersChatsComponent() {
               ) : (
                 <>
                   {availableChats.map((chat: Chat) => (
-                    <div key={chat.id}>
+                    <div key={chat.chatId}>
                       <ChatComponent
                         chat={chat}
                       />
