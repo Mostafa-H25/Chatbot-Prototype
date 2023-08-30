@@ -1,25 +1,54 @@
-"use client";
-
-import { ChangeEvent, useState } from "react";
-
-import { useGlobalContext } from "@/services/context/GlobalContext";
-
-import Folder from "@/interfaces/folder.interface";
+import { ChangeEvent } from "react";
+import Chat from "@/interfaces/chat.interface";
+import Prompt from "@/interfaces/prompt.interface";
 
 import CloseIcon from "@mui/icons-material/Close";
 import { useSidebarContext } from "@/services/context/SidebarContext";
+import {setSearch} from '@/services/redux/reducers/slideBaReducer'
+import {setFilteredChats} from '@/services/redux/reducers/slideBaReducer'
+import {setFilteredPrompts} from '@/services/redux/reducers/slideBaReducer'
+import { useSelector , useDispatch } from "react-redux";
+import { useGlobalContext } from "@/services/context/GlobalContext";
 
 interface Props {
   sidebar: string;
 }
 
 export default function Search({ sidebar }: Props) {
-  const { search, setSearch, onSearch, folders, setFolders } =
-    useSidebarContext();
-  const [isLoading, setIsLoading] = useState(false);
+  // const { chats, prompts } = useGlobalContext();
+  // const { search, setSearch, setFilteredChats, setFilteredPrompts } =
+  //   useSidebarContext();
+  const { chats , prompts} = useSelector((state)=> state.app);
+  const { search } = useSelector((state)=> state.slide);
+  const dispatch = useDispatch();
+  const onSearch = (e: ChangeEvent<HTMLInputElement>, sidebar: string) => {
+    if (sidebar === "chatSidebar") {
+      dispatch(setSearch((prevState: any) => {
+        const currentState = e.target.value;
+        return currentState;
+      }));
+      dispatch(setFilteredChats((prevState: any) => {
+        const currentState = chats.filter((chat: Chat) =>
+          chat.title.toLowerCase().includes(search.toLowerCase())
+        );
+        return currentState;
+      }));
+    } else if (sidebar === "promptSidebar") {
+      dispatch(setSearch((prevState: any) => {
+        const currentState = e.target.value;
+        return currentState;
+      }));
+      dispatch(setFilteredPrompts((prevState: any) => {
+        const currentState = prompts.filter((prompt: Prompt) =>
+          prompt.title.toLowerCase().includes(search.toLowerCase())
+        );
+        return currentState;
+      }));
+    }
+  };
 
   const clearSearch = () => {
-    setSearch("");
+    dispatch(setSearch(""));
   };
 
   return (
@@ -32,7 +61,7 @@ export default function Search({ sidebar }: Props) {
         placeholder="Search..."
         value={search}
         onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          onSearch(event, sidebar, setIsLoading)
+          onSearch(event, sidebar)
         }
       />
       {search && (

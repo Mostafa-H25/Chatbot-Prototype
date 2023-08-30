@@ -1,45 +1,59 @@
 import { Dispatch, SetStateAction } from 'react';
 
-import { useGlobalContext } from '@/services/context/GlobalContext';
 
-import AddIcon from '@mui/icons-material/Add';
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
-import { useSidebarContext } from '@/services/context/SidebarContext';
 import { useSession } from 'next-auth/react';
 
+import { useGlobalContext } from "@/services/context/GlobalContext";
+import { useSidebarContext } from "@/services/context/SidebarContext";
+
+import Chat from "@/interfaces/chat.interface";
+import Folder from "@/interfaces/folder.interface";
+
+import AddIcon from "@mui/icons-material/Add";
+import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
+import { setChats } from "@/services/redux/reducers/appSlice";
+import { useSelector , useDispatch } from "react-redux";
+import {setFolders} from '@/services/redux/reducers/slideBaReducer'
+import moment from "moment";
 export default function ChatSidebarHeader() {
-  const { user, chats, setChats } = useGlobalContext();
-  const { folders, setFolders } = useSidebarContext();
   const { data: session } = useSession();
+
+  const {user, chats } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
+
+  const {folders } = useSelector((state) => state.slide);
+
   const addChat = async () => {
     let counter = chats.length + 1;
-    setChats([
+    dispatch(setChats([
       ...chats,
       {
-        userId: '1',
-        isDeleted: false,
         chatId: String(counter),
         title: `New Conversation ${counter}`,
         modifiedAt: new Date(),
-        createdAt: new Date(),
+        createdAt:new Date(),
+        userId: "1" ,
+        isDeleted : false,
       },
-    ]);
+    ]))
   };
 
   const addFolder = async () => {
     let counter = folders.length + 1;
-    setFolders([
+    dispatch(setFolders([
       ...folders,
       {
         folderId: String(counter),
         userId: '1',
         type: 'chat',
+        title: `New Folder ${counter}`,
+        items: [],
         createdAt: new Date(),
         isDeleted: false,
         title: `New Folder ${counter}`,
         chatIds: [],
       },
-    ]);
+    ]))
   };
 
   return (

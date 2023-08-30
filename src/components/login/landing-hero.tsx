@@ -1,29 +1,31 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
-import { useGlobalContext } from "@/services/context/GlobalContext";
-import { useRef, useState, MouseEvent, useEffect } from "react";
+import { useModalContext } from "@/services/context/ModalContext";
 
 import TypewritterComponent from "typewriter-effect";
+import  {setIsAuthenticationModalOpen}  from "@/services/redux/reducers/appSlice";
+
+import { useSelector , useDispatch } from "react-redux";
 import AuthenticationModal from "./authenticationModal/AuthenticationModal";
 
 const LandingHero = () => {
-  const { isAuthenticationModalOpen, setIsAuthenticationModalOpen } =
-    useGlobalContext();
+  //const { isAuthenticationModalOpen, setIsAuthenticationModalOpen } =useGlobalContext();
+    const { isAuthenticationModalOpen } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
   type AuthenticationType = "Sign In" | "Register";
   const [authenticationType, setAuthenticationType] =
     useState<AuthenticationType>("Sign In");
-  const ref = useRef<HTMLDivElement>(null);
 
   const openAuthenticationModal = (type: AuthenticationType) => {
     setAuthenticationType(type);
-    setIsAuthenticationModalOpen(true);
+    dispatch(setIsAuthenticationModalOpen(true));
   };
 
   const closeAuthenticationModal = () => {
-    setIsAuthenticationModalOpen(false);
+    dispatch(setIsAuthenticationModalOpen(false));
     setAuthenticationType("Sign In");
   };
 
@@ -67,7 +69,6 @@ const LandingHero = () => {
         {isAuthenticationModalOpen && (
           <div className='fixed inset-0 top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-50'>
             <AuthenticationModal
-              setIsAuthenticationModalOpen={setIsAuthenticationModalOpen}
               authenticationType={authenticationType}
               closeModal={closeAuthenticationModal}
               setAuthenticationType={setAuthenticationType}

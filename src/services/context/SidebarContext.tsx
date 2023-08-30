@@ -14,6 +14,8 @@ import Prompt from "@/interfaces/prompt.interface";
 import { useGlobalContext } from "./GlobalContext";
 
 interface StateContext {
+  folders: Folder[];
+  setFolders: any;
   search: string;
   setSearch: any;
   filteredFolders: Folder[];
@@ -22,12 +24,11 @@ interface StateContext {
   setFilteredChats: any;
   filteredPrompts: Prompt[];
   setFilteredPrompts: any;
-  onSearch: any;
-  folders: Folder[];
-  setFolders: (folders: Folder[]) => void;
 }
 
-const Context = createContext<StateContext>({
+const initialState = {
+  folders: [],
+  setFolders: (folders: Folder[]) => {},
   search: "",
   setSearch: (search: string) => {},
   filteredFolders: [],
@@ -36,10 +37,9 @@ const Context = createContext<StateContext>({
   setFilteredChats: (filteredChats: Chat[]) => {},
   filteredPrompts: [],
   setFilteredPrompts: (filteredPrompts: Prompt[]) => {},
-  onSearch: () => {},
-  folders: [],
-  setFolders: (folders: Folder[]) => {},
-});
+};
+
+const Context = createContext<StateContext>(initialState);
 
 export const useSidebarContext = () => useContext(Context);
 
@@ -48,49 +48,17 @@ interface Props {
 }
 
 export default function SidebarContext({ children }: Props) {
-  const { chats, prompts } = useGlobalContext();
+  const [folders, setFolders] = useState<Folder[]>([]);
   const [search, setSearch] = useState("");
   const [filteredFolders, setFilteredFolders] = useState<Folder[]>([]);
   const [filteredChats, setFilteredChats] = useState<Chat[]>([]);
   const [filteredPrompts, setFilteredPrompts] = useState<Prompt[]>([]);
-  const [folders, setFolders] = useState<Folder[]>([]);
-  const [tabBackgroundColor, setTabBackgroundColor] = useState("#343541");
-
-  const onSearch = (
-    e: ChangeEvent<HTMLInputElement>,
-    sidebar: string,
-    setIsLoading: any
-  ) => {
-    setIsLoading(true);
-    if (sidebar === "chatSidebar") {
-      setSearch((prevState) => {
-        const currentState = e.target.value;
-        return currentState;
-      });
-      setFilteredChats((prevState) => {
-        const currentState = chats.filter((chat: Chat) =>
-          chat.title.toLowerCase().includes(search.toLowerCase())
-        );
-        return currentState;
-      });
-    } else if (sidebar === "promptSidebar") {
-      setSearch((prevState) => {
-        const currentState = e.target.value;
-        return currentState;
-      });
-      setFilteredPrompts((prevState) => {
-        const currentState = prompts.filter((prompt: Prompt) =>
-          prompt.title.toLowerCase().includes(search.toLowerCase())
-        );
-        return currentState;
-      });
-    }
-    setIsLoading(false);
-  };
 
   return (
     <Context.Provider
       value={{
+        folders,
+        setFolders,
         search,
         setSearch,
         filteredFolders,
@@ -99,9 +67,6 @@ export default function SidebarContext({ children }: Props) {
         setFilteredChats,
         filteredPrompts,
         setFilteredPrompts,
-        onSearch,
-        folders,
-        setFolders,
       }}
     >
       {children}

@@ -7,4 +7,5 @@ export default interface Message {
   answer?: string;
   createdAt?: Date;
   isDeleted?: boolean;
+
 }

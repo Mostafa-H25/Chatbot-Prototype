@@ -9,26 +9,21 @@ import {
 } from 'react';
 import Chat from '@/interfaces/chat.interface';
 import Prompt from '@/interfaces/prompt.interface';
-import { ChatTab } from '@/interfaces/chatTab.interface';
 import PromptModal from '@/interfaces/promptModal.interface';
 import Message from '@/interfaces/message.interface';
 import { DummyUser } from '@/dummyData/dummyUser';
+import User from '@/interfaces/user.interface';
+
+import ChatTab from "@/interfaces/chatTab.interface";
 
 interface StateContext {
   user: User | undefined;
   setUser: any;
   chats: Chat[];
   setChats: any;
+  setMessages: any;
   prompts: Prompt[];
   setPrompts: any;
-  isSettingsModalOpen: boolean;
-  setIsSettingsModalOpen: any;
-  isAuthenticationModalOpen: boolean;
-  setIsAuthenticationModalOpen: any;
-  isPromptModalOpen: PromptModal;
-  setIsPromptModalOpen: any;
-  isModalOpen: boolean;
-  setIsModalOpen: any;
   chatTabs: ChatTab[];
   setChatTabs: any;
   theme: string;
@@ -47,22 +42,15 @@ const initialState = {
   setUser: (user: User) => {},
   chats: [],
   setChats: (chats: Chat[]) => {},
+  messages: [],
+  setMessages: (messages: Message[]) => {},
   prompts: [],
   setPrompts: (prompts: Prompt[]) => {},
-  isSettingsModalOpen: false,
-  setIsSettingsModalOpen: (isSettingsModalOpen: boolean) => {},
-  isAuthenticationModalOpen: false,
-  setIsAuthenticationModalOpen: (isAuthenticationModalOpen: boolean) => {},
-  isPromptModalOpen: { conditional: false, prompt: undefined },
-  setIsPromptModalOpen: (isPromptModalOpen: {}) => {},
-  isModalOpen: false,
-  setIsModalOpen: (isModalOpen: boolean) => {},
   chatTabs: [],
   setChatTabs: (chatTabs: ChatTab[]) => {},
   theme: '',
   toggleTheme: () => {},
 
-  messages: [],
   isMessageUpading: false,
   addMessages: () => {},
   removeMessage: () => {},
@@ -82,10 +70,10 @@ export default function GlobalContext({ children }: Props) {
   const [theme, setTheme] = useState('dark');
   const [user, setUser] = useState<User | undefined>(DummyUser);
   const [chats, setChats] = useState<Chat[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [chatTabs, setChatTabs] = useState<ChatTab[]>([]);
 
-  const [messages, setMessages] = useState<Message[]>([]);
   const [isMessageUpading, setIsMessageUpdating] = useState<boolean>(false);
 
   const [isSettingsModalOpen, setIsSettingsModalOpen] =
@@ -124,22 +112,43 @@ export default function GlobalContext({ children }: Props) {
     );
   };
 
-  useEffect(() => {
-    if (
-      isSettingsModalOpen ||
-      isAuthenticationModalOpen ||
-      isPromptModalOpen.conditional
-    ) {
-      setIsModalOpen(true);
-      console.log(isAuthenticationModalOpen);
-    } else {
-      setIsModalOpen(false);
-    }
-  }, [
-    isSettingsModalOpen,
-    isAuthenticationModalOpen,
-    isPromptModalOpen.conditional,
-  ]);
+  // const fetchChats = async () => {
+  //   try {
+  //     const endpoint = `/api/chat/`;
+  //     const options = {
+  //       method: "GET",
+  //       header: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     };
+  //     const response = await fetch(endpoint, options);
+  //     const data = await response.json();
+  //     setChats(data);
+  //   } catch (error) {
+  //     console.log("ERROR", error);
+  //   }
+  // };
+  // const fetchPrompts = async () => {
+  //   try {
+  //     const endpoint = `/api/prompt/`;
+  //     const options = {
+  //       method: "GET",
+  //       header: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     };
+  //     const response = await fetch(endpoint, options);
+  //     const data = await response.json();
+  //     setPrompts(data);
+  //   } catch (error) {
+  //     console.log("ERROR", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchChats();
+  //   fetchPrompts();
+  // }, []);
 
   return (
     <AppContext.Provider
@@ -148,21 +157,14 @@ export default function GlobalContext({ children }: Props) {
         setUser,
         chats,
         setChats,
+        messages,
+        setMessages,
         prompts,
         setPrompts,
-        isSettingsModalOpen,
-        setIsSettingsModalOpen,
-        isAuthenticationModalOpen,
-        setIsAuthenticationModalOpen,
-        isPromptModalOpen,
-        setIsPromptModalOpen,
-        isModalOpen,
-        setIsModalOpen,
         chatTabs,
         setChatTabs,
         theme,
         toggleTheme,
-        messages,
         addMessages,
         removeMessage,
         updateMessage,

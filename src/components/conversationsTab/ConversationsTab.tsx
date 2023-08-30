@@ -1,53 +1,58 @@
-import { useEffect } from 'react';
-import Link from 'next/link';
+"use client";
 
-import { useGlobalContext } from '@/services/context/GlobalContext';
+import { useEffect } from "react";
+import Link from "next/link";
 
-import Chat from '@/interfaces/chat.interface';
+import Chat from "@/interfaces/chat.interface";
+import ChatTab from "@/interfaces/chatTab.interface";
 
-import AssistantIcon from '@mui/icons-material/Assistant';
-import CloseIcon from '@mui/icons-material/Close';
-import { useRouter } from 'next/navigation';
-import { ChatTab } from '@/interfaces/chatTab.interface';
-
-
+import AssistantIcon from "@mui/icons-material/Assistant";
+import CloseIcon from "@mui/icons-material/Close";
+import { useRouter } from "next/navigation";
+import { useSelector , useDispatch } from "react-redux";
+import { setChatTabs } from "@/services/redux/reducers/appSlice";
 interface Props {
   id: string;
   chat: Chat;
 }
 
 export default function ConversationsTab({ id, chat }: Props) {
-  const { chatTabs, setChatTabs, theme } = useGlobalContext();
+ // const { chatTabs, setChatTabs, theme } = useGlobalContext();
+  const { chatTabs ,theme } = useSelector((state)=>state.app);
+  const dispatch = useDispatch();
   const router = useRouter();
 
   useEffect(() => {
     if (!chatTabs.find((chatTab) => chatTab.id === chat?.chatId))
-      setChatTabs([...chatTabs, { id: chat!.chatId, title: chat!.title }]);
-  }, [id]);
+      dispatch(setChatTabs([...chatTabs, { id: chat!.chatId, title: chat!.title }]));
+  }, [id ]);
+  console.log(chatTabs)
 
   const handleClick = (id: string) => {
-    setChatTabs((prevState: ChatTab[]) => {
-      const currentState: ChatTab[] = prevState.filter(
+    dispatch((dispatch, getState) => {
+      const currentState: ChatTab[] = getState().app.chatTabs.filter(
         (chatTab) => chatTab.id !== id
       );
-      return currentState;
-    });
+      dispatch(setChatTabs(currentState));
 
-    if (chat.chatId === id) {
-      if (chatTabs.length === 1) {
-        router.push('/chats');
-      } else {
-        router.push(chatTabs[chatTabs.length - 1].id);
+      // const chatTabs = useSelector((state)=> state.app) // Get updated chatTabs from the state
+      if (chat.chatId === id) {
+        if (chatTabs.length === 1) {
+          router.push("/chats");
+        } else {
+          router.push(chatTabs[chatTabs.length - 2].id);
+        }
       }
-    }
+    })
   };
 
   return (
     <div
       className={`flex mt-2 w-full h-fit bg-[#343541] ${
-        theme === 'dark' ? 'bg-[#343541]' : 'bg-white'
-      }`}>
-      {chatTabs.map((chatTab) => (
+        theme === "dark" ? " bg-[#343541]" : "bg-white"
+      }`}
+    >
+      {Array.isArray(chatTabs) && chatTabs.map((chatTab) => (
         <div
           key={chatTab.id}
           className='relative flex justify-between items-center '>

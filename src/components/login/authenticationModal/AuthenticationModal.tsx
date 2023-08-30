@@ -10,22 +10,22 @@ import { useRouter } from 'next/navigation';
 
 import { signIn } from 'next-auth/react';
 import { ToastContainer, toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { setIsAuthenticationModalOpen } from '@/services/redux/reducers/appSlice';
 
 interface Props {
   authenticationType: string;
   closeModal: any;
   setAuthenticationType: any;
-  setIsAuthenticationModalOpen: any;
 }
 
 export default function AuthenticationModal({
-  setIsAuthenticationModalOpen,
   authenticationType,
   closeModal,
   setAuthenticationType,
 }: Props) {
 
-
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -70,7 +70,7 @@ export default function AuthenticationModal({
 
       if (result?.ok) {
         toast.success('Sign in Successful');
-        setIsAuthenticationModalOpen(false);
+        dispatch(setIsAuthenticationModalOpen(false));
         setTimeout(() => {
           router.push('/chats');
         }, 1000);

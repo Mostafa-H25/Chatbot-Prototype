@@ -14,15 +14,20 @@ import ClearIcon from '@mui/icons-material/Clear';
 import ChatIcon from '@mui/icons-material/Chat';
 import { useSidebarContext } from '@/services/context/SidebarContext';
 
+import { setChats } from "@/services/redux/reducers/appSlice";
+import { useDispatch , useSelector } from "react-redux";
+import {setFolders} from '@/services/redux/reducers/slideBaReducer'
 interface Props {
   chat: Chat;
 }
 
 export default function ChatComponent({ chat }: Props) {
-  const { chats, setChats } = useGlobalContext();
-  const { folders, setFolders } = useSidebarContext();
 
-  const [title, setTitle] = useState('');
+  const { chats } = useSelector((state) => state.app);
+  const dispatch = useDispatch();
+
+  const { folders } = useSelector((state) => state.slide);
+  const [title, setTitle] = useState("");
   const [deleteChatConfirm, setDeleteChatConfirm] = useState(false);
   const [openEditTitle, setOpenEditTitle] = useState(false);
 
@@ -30,28 +35,94 @@ export default function ChatComponent({ chat }: Props) {
     setTitle(e.target.value);
   }
 
-  function editChatName(e: MouseEvent<HTMLButtonElement>, id: string) {
-    // e.preventDefault();
-    setChats(
-      chats.map((chat: Chat) => {
-        if (chat.chatId === id) {
-          chat.title = title;
-          return chat;
-        }
-        return chat;
-      })
-    );
-    setOpenEditTitle(false);
+  function editChatName(e: MouseEvent<HTMLButtonElement>, id: string ) {
+    // Find the chat to be edited
+    const chatToEdit = chats.find((chat) => chat.chatId  === id);
+
+    if (chatToEdit) {
+      const updatedChat = {
+        ...chatToEdit,
+        title: title, // Replace title with the new title
+      };
+
+      // Create a new array of chats with the updated chat
+      const updatedChats = chats.map((chat) =>
+        chat.chatId === id ? updatedChat : chat
+      );
+
+      // Dispatch the action to update the chats
+      dispatch(setChats(updatedChats));
+    }
   }
 
-  function deleteChat(id: string) {
-    setChats(chats.filter((chat: Chat) => chat.chatId !== id));
+  // const editChatName = async (e: MouseEvent<HTMLButtonElement>, id: string) => {
+  //   e.preventDefault();
+  //   // try {
+  //   //   const chat: Chat = chats.find((chat: Chat) => chat.chatId === id)!;
+  //   //   if (chat) chat.title = e.currentTarget.value;
+  //   //   const endpoint = `/api/chat/${id}`;
+  //   //   const options = {
+  //   //     method: "PUT",
+  //   //     header: {
+  //   //       "Content-Type": "application/json",
+  //   //     },
+  //   //     body: JSON.stringify({ chat }),
+  //   //   };
+  //   //   const response = await fetch(endpoint, options);
+  //   //   const data = await response.json();
+  //   //   // dummy data
+  //   //   const updatedChat: Chat = {
+  //   //     ...chat,
+  //   //     [e.currentTarget.name]: e.currentTarget.value,
+  //   //   };
+  //   //   setChats(
+  //   //     chats.map((chat: Chat) => {
+  //   //       if (chat.chatId === id) {
+  //   //         chat = updatedChat;
+  //   //         return chat;
+  //   //       }
+  //   //       return chat;
+  //   //     })
+  //   //   );
+  //   // } catch (error) {
+  //   //   console.log("ERROR", error);
+  //   // }
+  //   setChats(
+  //     chats.map((chat: Chat) => {
+  //       if (chat.chatId === id) {
+  //         chat.title = title;
+  //         return chat;
+  //       }
+  //       return chat;
+  //     })
+  //   );
+  //   setOpenEditTitle(false);
+  // };
+
+
+  const deleteChat = async (id: string) => {
+    dispatch(setChats(chats.filter((chat: Chat) => chat.chatId !== id)));
+    // try {
+    //   const endpoint = `/api/chat/${id}`;
+    //   const options = {
+    //     method: "DELETE",
+    //     header: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   };
+    //   const response = await fetch(endpoint, options);
+    //   const data = await response.json();
+    //   // dummy data
+    //   setChats(chats.filter((chat: Chat) => chat.chatId !== id));
+    // } catch (error) {
+    //   console.log("ERROR", error);
+    // }
 
     const updatedFolders = folders.map((folder) => ({
       ...folder,
       chatIds: folder.chatIds.filter((chatId) => chatId !== id),
     }));
-    setFolders(updatedFolders);
+    dispatch(setFolders(updatedFolders));
   }
 
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
@@ -104,7 +175,8 @@ export default function ChatComponent({ chat }: Props) {
           <>
             <Link
               href={`/chats/${chat.chatId}`}
-              className='flex items-center gap-3 w-full rounded-lg bg-[#343541]/90 p-3 cursor-pointer text-sm transition-colors duration-200 hover:bg-[#343541]/90'>
+              className="flex items-center gap-3 w-full rounded-lg bg-[#343541]/90 p-3 cursor-pointer text-sm transition-colors duration-200 hover:bg-[#343541]/90"
+            >
               <ChatIcon />
               <div className='relative max-h-5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap break-all text-left text-[12.5px] leading-3 pr-12'>
                 {chat.title}

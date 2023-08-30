@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import AuthProvider from '@/components/Providers/Providers';
 import 'react-toastify/dist/ReactToastify.css';
 import QueryProviders from '@/components/Providers/QueryClientProvider';
-
+import WrapRedux from './WrapRedux';
 export const metadata: Metadata = {
   title: 'AI Platform',
   description: 'AI Platform',
@@ -20,10 +20,10 @@ export default function RootLayout({
       <QueryProviders>
         <body>
           <AuthProvider>
-            <GlobalContext>
+            <WrapRedux>
               <div id='modal-root'></div>
               {children}
-            </GlobalContext>
+            </WrapRedux>
           </AuthProvider>
         </body>
       </QueryProviders>
